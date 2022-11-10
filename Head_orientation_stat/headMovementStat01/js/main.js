@@ -59,7 +59,7 @@
         valueMax : 2,
         
         
-        headSize : 60,//px
+        headSize : 80,//px
         headColor : "#757575",
       
       
@@ -311,10 +311,10 @@
           .attr("x", 0)
           .attr("y", -graphSettings.height*1.02)
           .attr("transform",  "rotate( "+(DataArrays.yRotMax - 3) +" , 0, 0)");
-        
-        
-        
-        
+          
+          
+          
+          
         
         graphStat.append("line") // add median line
           .attr("id", "median")
