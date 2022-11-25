@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////
-/*      Graph D3.js headOrientationStat_v1_0_0  */
+/*      Graph D3.js Head_orientation_v1_2_0     */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      nov-23-2022                             */
+/*      nov-24-2022                             */
 /*      main.js                                 */
 //////////////////////////////////////////////////
 
-//
+//This program allows the display of statistics on the orientation of the player's head.
 
 
 

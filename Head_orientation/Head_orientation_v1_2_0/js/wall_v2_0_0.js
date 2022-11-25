@@ -6,7 +6,7 @@
 /*      wall_v2_0_0.js                          */
 //////////////////////////////////////////////////
 
-//Contains the various global functions for the operation of the program.
+//Contains the various global functions to display items on the wall.
 
 var wall = {
   

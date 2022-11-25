@@ -1,35 +1,12 @@
 //////////////////////////////////////////////////
-/*      Graph D3.js headOrientationStat_v2      */
+/*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
 /*      nov-16-2022                             */
 /*      graphStat.js                            */
 //////////////////////////////////////////////////
 
-//Contains all the functions necessary for the operation of the wall display.
-
-/*
-    var graphSettings={
-        height : 265,//px
-        width : 550,//px
-        
-        marginTop : 290,//px
-        marginLeft : 125,//px
-        
-        
-        valueMax : 2,
-        
-        
-        headSize : 80,//px
-        headColor : "#757575",
-      
-      
-        displayHeadPoint : false,
-        displayFieldOfViewState : false,
-    
-    }
-
-*/
+//Contains all the functions necessary to display statistics.
 
 
 var graphStat = {
