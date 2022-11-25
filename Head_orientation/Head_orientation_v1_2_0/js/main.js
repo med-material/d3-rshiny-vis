@@ -277,25 +277,20 @@
       
 
     
-        var yRotSort = [];
+        var yRotSort = data.hearCamRotSort;
+ 
     
-        data.hr.forEach((element,index) => { // read data file
-            if(element<180){yRotSort.push(element)}else{yRotSort.push(-(360-element))}
-        });
-    
-        wall.wallSettings.xMax = data.mi[1]["x_extrem"] + (data.mi[1]["x_extrem"]/(data.mi[0]["n_col_row"]))*2;
+        wall.wallSettings.xMax = data.wallInfo[1]["x_extrem"] + (data.wallInfo[1]["x_extrem"]/(data.wallInfo[0]["n_col_row"]))*2;
         wall.wallSettings.xMin = -wall.wallSettings.xMax;
         
-        wall.wallSettings.yMax = data.mi[1]["y_extrem"] + (data.mi[1]["y_extrem"]/(data.mi[1]["n_col_row"]))*2;
+        wall.wallSettings.yMax = data.wallInfo[1]["y_extrem"] + (data.wallInfo[1]["y_extrem"]/(data.wallInfo[1]["n_col_row"]))*2;
         wall.wallSettings.yMin = -wall.wallSettings.yMax;
+      
         
-        
-        yRotSort.sort(compareNumbers); // sort value
-        
-        DataArrays.yRotMax = yRotSort[parseInt(yRotSort.length-1)]; // get last value
+        DataArrays.yRotMax = yRotSort[parseInt(yRotSort.length-1)]; // retrieval of the largest value of the rotation values
        
         
-        DataArrays.yRotMin =  yRotSort[0]; // get first 
+        DataArrays.yRotMin =  yRotSort[0]; // retrieval of the smallest value of the rotation values
         
         DataArrays.yRotMedian = yRotSort[parseInt(yRotSort.length/2)]; // get median value
         DataArrays.leastPresentValueLeft = yRotSort[parseInt(yRotSort.length*DataArrays.leastPresentValuePercentage)];

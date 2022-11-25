@@ -7,16 +7,20 @@ source("utils/loadrawdata.R")
 options("digits.secs"=6)
 
 
-
+#loading data
 AllData <- LoadFromDirectory("data")
 
 
-HeadRot <- sort(AllData$HeadCameraRotEulerY, method = "shell", index.return = TRUE)
 
+#retrieval of information necessary for the construction of the wall
+Moles <- unique(
+  AllData %>% 
+    filter(filename == "data/log_Event.csv") %>% 
+    select(MoleId,MolePositionLocalX,MolePositionLocalY,WallColumnCount,WallRowCount) %>%  
+    filter(!is.na(MoleId))
+  )
 
-Moles <- unique(AllData %>% filter(filename == "data/log_Event.csv") %>% select(MoleId,MolePositionLocalX,MolePositionLocalY,WallColumnCount,WallRowCount) %>%  filter(!is.na(MoleId)))
-
-MolesInfo <- data.frame(
+WallInfo <- data.frame( 
     x_extrem = c(
         min(as.double(Moles$MolePositionLocalX)),
         max(as.double(Moles$MolePositionLocalX))
@@ -32,15 +36,34 @@ MolesInfo <- data.frame(
 )
 
 
+#angle mapping at -180 to 180
+HeadCameraRotEulerY_not_na = AllData %>% drop_na(HeadCameraRotEulerY)
+
+HeadCameraRotEulerY_wrap <- ifelse(
+  (as.double(HeadCameraRotEulerY_not_na$HeadCameraRotEulerY) > 180),#if
+      -(360 - as.double(HeadCameraRotEulerY_not_na$HeadCameraRotEulerY)) , #do
+      HeadCameraRotEulerY_not_na$HeadCameraRotEulerY #else do
+  )
+
+#sort of angles
+HeadCameraRotEulerY_wrap_sort <- sort(as.double(HeadCameraRotEulerY_wrap), method = "shell", index.return = TRUE)
+
+
+#grouping of different variables to send them with R2D3
 data_to_json <- function(data) {
   jsonlite::toJSON(data, dataframe = "rows", auto_unbox = FALSE, rownames = TRUE)
 } 
 
 data <- list(
-  "hr" = HeadRot$x,
-  "mi" = MolesInfo
+  "wallInfo" = WallInfo,
+  "hearCamRotSort" = HeadCameraRotEulerY_wrap_sort$x
   )
 
+
+
+
+
+#creating a user interface
 ui <- fluidPage(
   verbatimTextOutput("selected"),
   

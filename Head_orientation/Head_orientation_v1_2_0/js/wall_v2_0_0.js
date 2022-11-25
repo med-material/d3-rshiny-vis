@@ -44,33 +44,33 @@ var wall = {
     
     addGraphMoles : function() {
     
-        var xStep = ((data.mi[1]["x_extrem"]*2)/((data.mi[0]["n_col_row"])-1))
-        var yStep = ((data.mi[1]["y_extrem"]*2)/((data.mi[1]["n_col_row"])-1))
+        var xStep = ((data.wallInfo[1]["x_extrem"]*2)/((data.wallInfo[0]["n_col_row"])-1))
+        var yStep = ((data.wallInfo[1]["y_extrem"]*2)/((data.wallInfo[1]["n_col_row"])-1))
 
-        for(var c = 0;c < (data.mi[0]["n_col_row"]); c++){
-          for(var r = 0;r < (data.mi[1]["n_col_row"]); r++){
+        for(var c = 0;c < (data.wallInfo[0]["n_col_row"]); c++){//for each columns
+          for(var r = 0;r < (data.wallInfo[1]["n_col_row"]); r++){//for each rows
 
             if(
               ((c == 0) && (r == 0))||
-              ((c == 0) && (r == (data.mi[1]["n_col_row"])-1))||
-              ((c == (data.mi[0]["n_col_row"]-1)) && (r == 0))||
-              ((c == (data.mi[0]["n_col_row"]-1)) && (r == (data.mi[1]["n_col_row"])-1))
+              ((c == 0) && (r == (data.wallInfo[1]["n_col_row"])-1))||
+              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == 0))||
+              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == (data.wallInfo[1]["n_col_row"])-1))
             ){
-               
+               //if the mole is at an angle
             }else{
+              //if the mole is not at an angle
               if((r+1) < 10){
                 DataArrays.idMoles.push((c+1)+"0"+(r+1));
               }else{
                 DataArrays.idMoles.push((c+1)+""+(r+1));
               }
               
-              DataArrays.objMoles.push(
-                    utils.addPointOnSvg(graphWall,wall.wallSettings.pointSize,wall.wallSettings.xScale(data.mi[0]["x_extrem"] + xStep*c),wall.wallSettings.yScale(data.mi[0]["y_extrem"] + yStep*r),wall.wallSettings.pointColor)
+              DataArrays.objMoles.push(//creation of the mole
+                    utils.addPointOnSvg(graphWall,wall.wallSettings.pointSize,wall.wallSettings.xScale(data.wallInfo[0]["x_extrem"] + xStep*c),wall.wallSettings.yScale(data.wallInfo[0]["y_extrem"] + yStep*r),wall.wallSettings.pointColor)
                );
             }
           }
         }
-        console.log(DataArrays.idMoles)
     },
     
     changeMolesState : function(){
