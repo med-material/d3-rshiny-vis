@@ -28,16 +28,11 @@ function PointLimit(x, y) {
 
   function storeCoords(xVal, yVal) { pointsArray.push([xVal,yVal,0])}
   
-  
- data.forEach((element,i) => {
-    EyesDirX.push(element.LocalGazeDirectionX)
-    EyesDirY.push(element.LocalGazeDirectionY)
-    if (element.is_hull == true) {
-    Xcoord = parseFloat(element.LocalGazeDirectionX,10)*1.02
-    Ycoord = parseFloat(element.LocalGazeDirectionY,10)*1.02
+ data.hull_list.forEach((element,i) => {                        //The forEach parse a very low amount of data as it search through only hull points
+    Xcoord = parseFloat(data.MainData[data.hull_list[i]-1].LocalGazeDirectionX)*1.02      
+    Ycoord = parseFloat(data.MainData[data.hull_list[i]-1].LocalGazeDirectionY)*1.02
     storeCoords(Xcoord,Ycoord)
-    }
-  }); 
+    }); 
   
   
 var xScale = d3.scaleLinear()
@@ -60,8 +55,8 @@ svg.append('g')
  function getCoordEyesDir(i){
    
    var Coord = [0,0];
-   Coord [0] = xScale(EyesDirX[i]*zoom);
-   Coord [1] = yScale(EyesDirY[i]*zoom);
+   Coord [0] = xScale(data.MainData[i].LocalGazeDirectionX*zoom);
+   Coord [1] = yScale(data.MainData[i].LocalGazeDirectionY*zoom);
    
     return([Coord[0],Coord[1]])
   }
@@ -75,26 +70,26 @@ svg.append('g')
   }
   
       
-  EyesDirX.forEach(function(e,i){
+  data.MainData.forEach(function(e,i){
         
   Mongraph.append("circle")
   .attr("cx", (d) => getCoordEyesDir(i)[0] )
   .attr("cy", (d) => getCoordEyesDir(i)[1] )
-  .attr("r", 1)
-  .style("fill","red");
+  .attr("r", 0.6)
+  .style("fill","rgb(255, 102, 102)");
   })
   
   var line= d3.line()
       .x((d,i) => getCoordEyesDir(i)[0])
       .y((d,i) => getCoordEyesDir(i)[1])
-      .curve(d3.curveMonotoneX)
+      //.curve(d3.curveMonotoneX)
   
       
   Mongraph.append("path")
-    .datum(data)
+    .datum(data.MainData)
     .attr("d", line)
     .style("fill", "none")
-    .style("stroke", "blue")
+    .style("stroke", "rgb(153, 153, 153)")
     .style("stroke-width", "1");
 
 
@@ -134,24 +129,24 @@ function findAngles(c, points) {
       pointsArray = Sort(pointsArray);
 
       ToAnotherList(pointsArray);
-
+      
     var line2= d3.line()
       .x((d,i) => getCoordlimit(i)[0])
       .y((d,i) => getCoordlimit(i)[1])
       //.curve(d3.curveMonotoneX)
       
   Mongraph.append("path")
-    .datum(data)
+    .datum(data.MainData)
     .attr("d", line2)
     .style("fill", "none")
-    .style("stroke", "red")
+    .style("stroke", "rgb(0, 89, 179)")
     .style("stroke-width", "3");      
       
 
       
   function Sort(points){
     var i, j, len = points.length
-    for( i=1 ; i<len-1 ; i++){
+    for( i=0 ; i<len-1 ; i++){
       for( j=i+1 ; j<len ; j++){
         if ( points[i][2] > points[j][2] ) {
           c = points[i];
@@ -160,9 +155,9 @@ function findAngles(c, points) {
         }
       }
     }
-    c = points[0]
+    /*c = points[0]
     points[0] = points[1]
-    points[1] = c
+    points[1] = c*/
     
     return points
   }
@@ -176,7 +171,7 @@ function findAngles(c, points) {
             test.push(points[i-1])
         }
       }
-      test.push(points[len-1])
+      //test.push(points[len-1])
       return test
     }
   
