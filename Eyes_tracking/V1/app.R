@@ -12,26 +12,11 @@ server <- function(input, output) {
   output$d3 <- renderD3({
     
     
-    data = data %>%filter(LocalGazeDirectionX != 'NULL')
+    Maindata = data %>%filter(LocalGazeDirectionX != 'NULL')
     
     Eyes_Data = data %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
     
     Xtrem_points <- chull(Eyes_Data$LocalGazeDirectionX, Eyes_Data$LocalGazeDirectionY)
-    
-    D = Eyes_Data[Xtrem_points, ]
-    
-    
-    
-    D = D %>% mutate(is_hull = TRUE,
-                     xy = paste(LocalGazeDirectionX,LocalGazeDirectionY))  %>% select(xy,is_hull)
-    
-    data = data %>% mutate(
-      xy = paste(LocalGazeDirectionX,LocalGazeDirectionY)
-    )
-    
-    Maindata = data %>% left_join(D, by = "xy")
-    
-    
     
     ui <- fluidPage(
       verbatimTextOutput("selected"),
