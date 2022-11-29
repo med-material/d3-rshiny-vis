@@ -14,7 +14,7 @@ server <- function(input, output) {
     
     Maindata = data %>%filter(LocalGazeDirectionX != 'NULL')
     
-    Eyes_Data = data %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
+    Eyes_Data = Maindata %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
     
     Xtrem_points <- chull(Eyes_Data$LocalGazeDirectionX, Eyes_Data$LocalGazeDirectionY)
     
