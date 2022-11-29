@@ -1,3 +1,12 @@
+#//////////////////////////////////////////////////
+#/*      CREATE Aalborg University               */
+#/*      aldsanms                                */
+#/*      nov-29-2022                             */
+#/*      app.R                                   */
+#/*      v_1_2_1                                 */
+#//////////////////////////////////////////////////
+  
+  
 
 library(shiny)
 library(r2d3)
@@ -68,7 +77,7 @@ ui <- fluidPage(
   verbatimTextOutput("selected"),
   
   
-  d3Output("d3")
+  d3Output("pageGraph")
   
 )
 
@@ -76,15 +85,15 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  output$d3 <- renderD3({
+  output$pageGraph <- renderD3({
     
     
     r2d3(
       data= data_to_json(data),
       script = "js/main.js",
-      dependencies = list("js/wall_v2_0_0.js",
-                          "js/utils_v1_0_0.js",
-                          "js/graphStat_v1_0_0.js"
+      dependencies = list("js/wall.js", #v2_0_1
+                          "js/utils.js", #v1_0_1
+                          "js/graphStat.js" #v1_0_0 
       )
     )
   

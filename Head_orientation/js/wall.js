@@ -1,12 +1,16 @@
 //////////////////////////////////////////////////
-/*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
 /*      nov-24-2022                             */
-/*      wall_v2_0_0.js                          */
+/*      wall.js                                 */
+/*      v2_0_1                                  */
 //////////////////////////////////////////////////
 
-//Contains the various global functions to display items on the wall.
+//Contains the various global functions for the operation of the program.
+
+
+
+
 
 var wall = {
   
@@ -23,6 +27,10 @@ var wall = {
         xScale : {}, // value to pixel for the x conversion obj
         
         
+        idMoles : [], // list of all moles ID
+        objMoles : [], // list of all moles obj (points into SVG) 
+        
+        
         xMin : -5,//minimum x value for the graph
         xMax : 5,//maximum x value for the graph
         
@@ -36,7 +44,13 @@ var wall = {
         laserSize : 10,//px
         laserColor : "red", // default color of the laser
         
+        indexMole : 0, // curent lines into moles CSV file
+        indexLaser : 0, // curent lines into laser CSV file
+        indexController : 0,
+        
     },
+    
+    
     
     test : function(){
         return 1;
@@ -60,12 +74,12 @@ var wall = {
             }else{
               //if the mole is not at an angle
               if((r+1) < 10){
-                DataArrays.idMoles.push((c+1)+"0"+(r+1));
+                wall.wallSettings.idMoles.push((c+1)+"0"+(r+1));
               }else{
-                DataArrays.idMoles.push((c+1)+""+(r+1));
+                wall.wallSettings.idMoles.push((c+1)+""+(r+1));
               }
               
-              DataArrays.objMoles.push(//creation of the mole
+              wall.wallSettings.objMoles.push(//creation of the mole
                     utils.addPointOnSvg(graphWall,wall.wallSettings.pointSize,wall.wallSettings.xScale(data.wallInfo[0]["x_extrem"] + xStep*c),wall.wallSettings.yScale(data.wallInfo[0]["y_extrem"] + yStep*r),wall.wallSettings.pointColor)
                );
             }
@@ -75,47 +89,47 @@ var wall = {
     
     changeMolesState : function(){
     
-        if(new Date(DataArrays.indexDate) >= new Date(data.aed[DataArrays.indexMole]['Timestamp'])){
-            while(new Date(DataArrays.indexDate) >= new Date(data.aed[DataArrays.indexMole]['Timestamp'])){
+        if(new Date(wall.wallSettings.indexDate) >= new Date(data.aed[wall.wallSettings.indexMole]['Timestamp'])){
+            while(new Date(wall.wallSettings.indexDate) >= new Date(data.aed[wall.wallSettings.indexMole]['Timestamp'])){
             
-                var thisMole = DataArrays.objMoles[DataArrays.idMoles.indexOf(parseInt(data.aed[DataArrays.indexMole]['MoleId']))];
+                var thisMole = wall.wallSettings.objMoles[wall.wallSettings.idMoles.indexOf(parseInt(data.aed[wall.wallSettings.indexMole]['MoleId']))];
                 
-                switch(data.aed[DataArrays.indexMole]['Event']){
+                switch(data.aed[wall.wallSettings.indexMole]['Event']){
                     
                     case "Mole Spawned":
                         utils.changeFillElement(thisMole,"green",1000);
-                        DataArrays.indexMole++;
+                        wall.wallSettings.indexMole++;
                         break;
                     
                     case "Fake Mole Spawned":
                         utils.changeFillElement(thisMole,"#FFFB00",1000);
-                        DataArrays.indexMole++;
+                        wall.wallSettings.indexMole++;
                         break;
                     
                     case "Mole Expired":
                         utils.changeFillElement(thisMole, wall.wallSettings.pointColor,1000);
-                        DataArrays.indexMole++
+                        wall.wallSettings.indexMole++
                         break;
                     
                     case "Fake Mole Expired":
                         utils.changeFillElement(thisMole, wall.wallSettings.pointColor,1000);
-                        DataArrays.indexMole++
+                        wall.wallSettings.indexMole++
                         break;
                     
                     case "Mole Hit":
                         utils.changeFillElement(thisMole,"orange",0);
                         utils.changeFillElement(thisMole, wall.wallSettings.pointColor,1000);
-                        DataArrays.indexMole++
+                        wall.wallSettings.indexMole++
                         break;
                     
                     case "Fake Mole Hit":
                         utils.changeFillElement(thisMole,"red",0);
                         utils.changeFillElement(thisMole, wall.wallSettings.pointColor,1000);
-                        DataArrays.indexMole++
+                        wall.wallSettings.indexMole++
                         break;
                     
                     default:
-                        DataArrays.indexMole++
+                        wall.wallSettings.indexMole++
                         break;
                 
                 }
@@ -125,14 +139,14 @@ var wall = {
     
     
     resetMoles : function(){
-        DataArrays.objMoles.forEach((element,index) => { 
-            DataArrays.objMoles[index]
+        wall.wallSettings.objMoles.forEach((element,index) => { 
+            wall.wallSettings.objMoles[index]
             .attr('fill',  wall.wallSettings.pointColor);
         });
     },
         
     addLaser : function(){
-        DataArrays.objLaser = utils.addPointOnSvg(graphWall, wall.wallSettings.laserSize,-100,-100,"red");
+        wall.wallSettings.objLaser = utils.addPointOnSvg(graphWall, wall.wallSettings.laserSize,-100,-100,"red");
     },
     
     getLaserCoordPx : function(i){
@@ -146,15 +160,15 @@ var wall = {
     
     changeLaserLocation : function(){
     
-        if(new Date(DataArrays.indexDate) >= new Date(data.ad[DataArrays.indexLaser]['Timestamp'])){
-            while(new Date(DataArrays.indexDate) >= new Date(data.ad[DataArrays.indexLaser]['Timestamp'])){
+        if(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.wallSettings.indexLaser]['Timestamp'])){
+            while(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.wallSettings.indexLaser]['Timestamp'])){
             
-                DataArrays.objLaser.transition()
+                wall.wallSettings.objLaser.transition()
                     .duration(14)
-                    .attr('cx', function(d) { return wall.getLaserCoordPx(DataArrays.indexLaser )[0]; })
-                    .attr('cy', function(d) { return wall.getLaserCoordPx(DataArrays.indexLaser )[1]; });
+                    .attr('cx', function(d) { return wall.getLaserCoordPx(wall.wallSettings.indexLaser )[0]; })
+                    .attr('cy', function(d) { return wall.getLaserCoordPx(wall.wallSettings.indexLaser )[1]; });
                     
-                DataArrays.indexLaser++
+                wall.wallSettings.indexLaser++
                 
             }
         }

@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
-/*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
 /*      nov-22-2022                             */
-/*      utils_v1_0_0.js                         */
+/*      utils.js                                */
+/*      v1_0_1                                  */
 //////////////////////////////////////////////////
 
 //Contains the various global functions for the operation of the program.
@@ -41,24 +41,6 @@ var utils = {
         .attr('style',style)
     );
   },
-  
-  clock : function(){
-  
-  if(mouvementSettings.isStart){
-  
-      wall.changeLaserLocation();
-      wall.changeMolesState();
-      graphController.changeControllerLocation();
-      
-      mouvementSettings.index ++;
-      DataArrays.indexDate = new Date(DataArrays.dateMin.getTime()  + 14*mouvementSettings.index); // add 100  Msecond to the curent index date 
-    
-      slider.sliderSettings.objSlider.value = mouvementSettings.index;
-  }
-  
-  setTimeout(utils.clock, 14);// call clock function in 1000 ms
-  
-}
   
 };
 
