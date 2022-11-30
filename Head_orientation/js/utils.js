@@ -17,6 +17,7 @@ var utils = {
     return "utils ok";
   },
   
+  // Change the background color of the element with a time transition
   changeFillElement : function(element = {}, color="#00000000",duration = 0){
     element.transition()
         .duration(duration)

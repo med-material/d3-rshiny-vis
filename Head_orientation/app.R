@@ -70,8 +70,6 @@ data <- list(
 
 
 
-
-
 #creating a user interface
 ui <- fluidPage(
   verbatimTextOutput("selected"),
@@ -80,7 +78,6 @@ ui <- fluidPage(
   d3Output("pageGraph")
   
 )
-
 
 
 

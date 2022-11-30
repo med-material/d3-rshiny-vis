@@ -46,7 +46,7 @@ var wall = {
         
         indexMole : 0, // curent lines into moles CSV file
         indexLaser : 0, // curent lines into laser CSV file
-        indexController : 0,
+        indexController : 0, //curent lines into controller CSV file
         
     },
     
@@ -58,28 +58,31 @@ var wall = {
     
     addGraphMoles : function() {
     
+        // Average offset between each mole in X
         var xStep = ((data.wallInfo[1]["x_extrem"]*2)/((data.wallInfo[0]["n_col_row"])-1))
+        // Average offset between each mole in Y
         var yStep = ((data.wallInfo[1]["y_extrem"]*2)/((data.wallInfo[1]["n_col_row"])-1))
 
         for(var c = 0;c < (data.wallInfo[0]["n_col_row"]); c++){//for each columns
           for(var r = 0;r < (data.wallInfo[1]["n_col_row"]); r++){//for each rows
 
             if(
-              ((c == 0) && (r == 0))||
-              ((c == 0) && (r == (data.wallInfo[1]["n_col_row"])-1))||
-              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == 0))||
-              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == (data.wallInfo[1]["n_col_row"])-1))
+              ((c == 0) && (r == 0))||// Mole lower left
+              ((c == 0) && (r == (data.wallInfo[1]["n_col_row"])-1))|| // Mole lower right
+              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == 0))|| // mole top left
+              ((c == (data.wallInfo[0]["n_col_row"]-1)) && (r == (data.wallInfo[1]["n_col_row"])-1)) // mole top right
             ){
-               //if the mole is at an angle
+               // If the mole is at an angle
             }else{
-              //if the mole is not at an angle
+              // Tf the mole is not at an angle
               if((r+1) < 10){
                 wall.wallSettings.idMoles.push((c+1)+"0"+(r+1));
               }else{
                 wall.wallSettings.idMoles.push((c+1)+""+(r+1));
               }
               
-              wall.wallSettings.objMoles.push(//creation of the mole
+              // Adding moles to the wall
+              wall.wallSettings.objMoles.push(
                     utils.addPointOnSvg(graphWall,wall.wallSettings.pointSize,wall.wallSettings.xScale(data.wallInfo[0]["x_extrem"] + xStep*c),wall.wallSettings.yScale(data.wallInfo[0]["y_extrem"] + yStep*r),wall.wallSettings.pointColor)
                );
             }
@@ -89,14 +92,18 @@ var wall = {
     
     changeMolesState : function(){
     
+        // If the target date is less than the date in the index of events
         if(new Date(wall.wallSettings.indexDate) >= new Date(data.aed[wall.wallSettings.indexMole]['Timestamp'])){
             while(new Date(wall.wallSettings.indexDate) >= new Date(data.aed[wall.wallSettings.indexMole]['Timestamp'])){
-            
+                
+                // Retrieve the object associated with the mole
                 var thisMole = wall.wallSettings.objMoles[wall.wallSettings.idMoles.indexOf(parseInt(data.aed[wall.wallSettings.indexMole]['MoleId']))];
                 
+                // Event playback
                 switch(data.aed[wall.wallSettings.indexMole]['Event']){
                     
                     case "Mole Spawned":
+                        // Change the background color of the mole with a time transition
                         utils.changeFillElement(thisMole,"green",1000);
                         wall.wallSettings.indexMole++;
                         break;
@@ -137,18 +144,20 @@ var wall = {
         }
     },
     
-    
+    // Hand over all moles in their original state
     resetMoles : function(){
         wall.wallSettings.objMoles.forEach((element,index) => { 
             wall.wallSettings.objMoles[index]
             .attr('fill',  wall.wallSettings.pointColor);
         });
     },
-        
+      
+    // Add a laser's element on the wall  
     addLaser : function(){
         wall.wallSettings.objLaser = utils.addPointOnSvg(graphWall, wall.wallSettings.laserSize,-100,-100,"red");
     },
     
+    // Convert laser's coordinates to pixel values
     getLaserCoordPx : function(i){
         var coord = [0,0];
         
@@ -160,6 +169,7 @@ var wall = {
     
     changeLaserLocation : function(){
     
+        // If the target date is less than the date in the index of events
         if(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.wallSettings.indexLaser]['Timestamp'])){
             while(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.wallSettings.indexLaser]['Timestamp'])){
             

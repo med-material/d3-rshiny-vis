@@ -25,8 +25,11 @@
 // Initialization **************************************************************
 
 
+    // Delete content created by R2D3 to do it myself
     document.getElementById("pageGraph").remove();
     
+    
+    // Create a DIV as a background
     var back = utils.addElement("div",d3.select("body"),
                   [
                     "width:"+windowSettings.width+"px;"+
@@ -34,8 +37,9 @@
                     "position: relative"
                   ]
                 );
-              
-    svg = utils.addElement("svg",back,
+                
+    // Add SVG for wall display   
+    var svg = utils.addElement("svg",back,
               [
                 "width:"+ wall.wallSettings.width+"px;"+
                 "height:"+ wall.wallSettings.height+"px;"+
@@ -44,8 +48,11 @@
                 "margin-top:"+ wall.wallSettings.marginTop+"px"
               ]
           );
+          
+    // Add work area 'g' for wall display
+    var graphWall = svg.append("g"); 
       
-    // create an section for graph  
+    // Create an section for graph  
     var headOrientationStatDiv = back.append('div') 
               .attr('style', 
                   "width:" +graphStat.graphSettings.width+"px;"+
@@ -57,7 +64,7 @@
               );
     
     
-    var graphWall = svg.append("g"); 
+    
         
  
 
@@ -83,31 +90,37 @@
 
 
     
-    function dataLoading(){ // read CSV files
+    function dataLoading(){ // Read CSV files
       
 
-    
+        // Sorted Y rotation array
         var yRotSort = data.hearCamRotSort;
  
-    
+        // Calculation of the extreme values of the wall
+        //                     =                       Xmax   +   the size of a mole * 2
         wall.wallSettings.xMax = data.wallInfo[1]["x_extrem"] + (data.wallInfo[1]["x_extrem"]/(data.wallInfo[0]["n_col_row"]))*2;
         wall.wallSettings.xMin = -wall.wallSettings.xMax;
         
         wall.wallSettings.yMax = data.wallInfo[1]["y_extrem"] + (data.wallInfo[1]["y_extrem"]/(data.wallInfo[1]["n_col_row"]))*2;
         wall.wallSettings.yMin = -wall.wallSettings.yMax;
       
-        
-        graphStat.graphSettings.yRotMax = yRotSort[parseInt(yRotSort.length-1)]; // retrieval of the largest value of the rotation values
+        // Retrieval of the largest value of the rotation values
+        graphStat.graphSettings.yRotMax = yRotSort[parseInt(yRotSort.length-1)];
        
+        // Retrieval of the smallest value of the rotation values
+        graphStat.graphSettings.yRotMin =  yRotSort[0]; 
         
-        graphStat.graphSettings.yRotMin =  yRotSort[0]; // retrieval of the smallest value of the rotation values
+        // Get median value
+        graphStat.graphSettings.yRotMedian = yRotSort[parseInt(yRotSort.length/2)];
         
-        graphStat.graphSettings.yRotMedian = yRotSort[parseInt(yRotSort.length/2)]; // get median value
+        // Get least present value left
         graphStat.graphSettings.leastPresentValueLeft = yRotSort[parseInt(yRotSort.length*graphStat.graphSettings.leastPresentValuePercentage)];
+        
+        // Get least present value right
         graphStat.graphSettings.leastPresentValueRight = yRotSort[parseInt(yRotSort.length - yRotSort.length*graphStat.graphSettings.leastPresentValuePercentage)];
         
-        
-        wall.wallSettings.yScale = d3.scaleLinear() // declare the wall domains
+        // Declaration of the wall domains
+        wall.wallSettings.yScale = d3.scaleLinear() 
           .domain([(wall.wallSettings.yMax), (wall.wallSettings.yMin)]) 
           .range([(0), (wall.wallSettings.height)]);
         
@@ -127,17 +140,23 @@
         ){
       
       
+        // Update display values
         wall.wallSettings.displayMoles = displayMoles;
         graphStat.graphSettings.displayHeadPoint = displayHeadPoint;
         graphStat.graphSettings.displayFieldOfViewState = displayFieldOfViewState;
         
-        
+        // Loading of data useful for the operation of the program
         dataLoading();
         
+        
+        // Add moles to the wall
         if(displayMoles)wall.addGraphMoles();
         
+        
+        // Add head point to the wall
         if(displayHeadPoint)graphStat.addHeadPoint();
         
+        // Add head orientation stats to the wall
         if(displayFieldOfViewState)graphStat.addFieldOfViewState();
     }
     
