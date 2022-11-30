@@ -1,19 +1,20 @@
-var zoom = 1;
-var graphValueMax = 0.5;
-var pointsArray = [null]
-var pointsOnlyX = []
-var pointsOnlyY = []
-var xScale
-var yScale
+var Global_Variables = {
+  zoom : 1,
+  graphValueMax : 0.5,
+  pointsArray : [null],
+  pointsOnlyX : [],
+  pointsOnlyY : [],
+  xScale : {},
+  yScale : {}
+}
 
-
-function storeCoords(xVal, yVal) { pointsArray.push([xVal,yVal,0])}
+function storeCoords(xVal, yVal) { Global_Variables.pointsArray.push([xVal,yVal,0])}
 
 function getCoordEyesDir(i){
    
    var Coord = [0,0];
-   Coord [0] = xScale(data.MainData[i].LocalGazeDirectionX*zoom);
-   Coord [1] = yScale(data.MainData[i].LocalGazeDirectionY*zoom);
+   Coord [0] = Global_Variables.xScale(data.MainData[i].LocalGazeDirectionX*Global_Variables.zoom);
+   Coord [1] = Global_Variables.yScale(data.MainData[i].LocalGazeDirectionY*Global_Variables.zoom);
    
     return([Coord[0],Coord[1]])
 }
@@ -21,8 +22,8 @@ function getCoordEyesDir(i){
 function getCoordlimit(i){
    
    var Coord = [0,0];
-   Coord [0] = xScale(pointsOnlyX[i]*zoom);
-   Coord [1] = yScale(pointsOnlyY[i]*zoom);
+   Coord [0] = Global_Variables.xScale(Global_Variables.pointsOnlyX[i]*Global_Variables.zoom);
+   Coord [1] = Global_Variables.yScale(Global_Variables.pointsOnlyY[i]*Global_Variables.zoom);
     return([Coord[0],Coord[1]])
 }
 
@@ -77,11 +78,11 @@ function removeDuplicate (points){
   
 function ToAnotherList(points) {
     for (i=0; i< points.length; i++){
-      pointsOnlyX.push(points[i][0])
-      pointsOnlyY.push(points[i][1])
+      Global_Variables.pointsOnlyX.push(points[i][0])
+      Global_Variables.pointsOnlyY.push(points[i][1])
     }
-    pointsOnlyX.push(points[0][0])
-    pointsOnlyY.push(points[0][1])
+    Global_Variables.pointsOnlyX.push(points[0][0])
+    Global_Variables.pointsOnlyY.push(points[0][1])
   }
   
 function Init(){
@@ -94,20 +95,20 @@ function Init(){
     .attr('width',900)
     .attr('height',"auto")
     
-    xScale = d3.scaleLinear()
-    			.domain([graphValueMax/zoom, -graphValueMax/zoom]) 
+    Global_Variables.xScale = d3.scaleLinear()
+    			.domain([Global_Variables.graphValueMax/Global_Variables.zoom, -Global_Variables.graphValueMax/Global_Variables.zoom]) 
     			.range([0, 900]);
-    yScale = d3.scaleLinear()
-    			.domain([-graphValueMax/zoom, graphValueMax/zoom]) 
+    Global_Variables.yScale = d3.scaleLinear()
+    			.domain([-Global_Variables.graphValueMax/Global_Variables.zoom, Global_Variables.graphValueMax/Global_Variables.zoom]) 
     			.range([0,900]);
     			
     svg.append('g')
     	.attr('transform', 'translate(450,0)')
-    	.call(d3.axisLeft(xScale).ticks(10));
+    	.call(d3.axisLeft(Global_Variables.xScale).ticks(10));
     
     svg.append('g')
       .attr('transform', 'translate(0,450)')
-      .call(d3.axisBottom(yScale).ticks(10));   
+      .call(d3.axisBottom(Global_Variables.yScale).ticks(10));   
       
       return Graph;
 }  
@@ -145,16 +146,16 @@ function Main(){
     .style("stroke-width", "1");
 
       // find center
-      var cent = findCenter(pointsArray);
+      var cent = findCenter(Global_Variables.pointsArray);
       
       // find angles
-      findAngles(cent, pointsArray);
+      findAngles(cent, Global_Variables.pointsArray);
       
-      pointsArray = removeDuplicate(pointsArray)
+      Global_Variables.pointsArray = removeDuplicate(Global_Variables.pointsArray)
       
-      pointsArray = Sort(pointsArray);
+      Global_Variables.pointsArray = Sort(Global_Variables.pointsArray);
 
-      ToAnotherList(pointsArray);
+      ToAnotherList(Global_Variables.pointsArray);
       
     var line2= d3.line()
       .x((d,i) => getCoordlimit(i)[0])
