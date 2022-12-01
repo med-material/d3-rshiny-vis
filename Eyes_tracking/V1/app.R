@@ -8,50 +8,35 @@ data <- read.csv(file = "Eyes_log_Sample.csv",stringsAsFactors = FALSE,
                     sep = ";")
 
 
-
-data = data %>%filter(LocalGazeDirectionX != 'NULL')
-
-
-Eyes_Data = data %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
-
-
-Xtrem_points <- chull(Eyes_Data$LocalGazeDirectionX, Eyes_Data$LocalGazeDirectionY)
-plot(Eyes_Data[Xtrem_points, ])
-lines(Eyes_Data[Xtrem_points, ])
-D = Eyes_Data[Xtrem_points, ]
-
-
-
-D = D %>% mutate(is_hull = TRUE,
-  xy = paste(LocalGazeDirectionX,LocalGazeDirectionY))  %>% select(xy,is_hull)
-
-data = data %>% mutate(
-  xy = paste(LocalGazeDirectionX,LocalGazeDirectionY)
-)
-
-data = data %>% left_join(D, by = "xy")
-
-
-
-ui <- fluidPage(
-  verbatimTextOutput("selected"),
-  
-  
-  d3Output("d3")
-  
-
-  
-)
-
-
-
-
 server <- function(input, output) {
   output$d3 <- renderD3({
     
     
+    Maindata = data %>%filter(LocalGazeDirectionX != 'NULL')
+    
+    Eyes_Data = Maindata %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
+    
+    Xtrem_points <- chull(Eyes_Data$LocalGazeDirectionX, Eyes_Data$LocalGazeDirectionY)
+    
+    ui <- fluidPage(
+      verbatimTextOutput("selected"),
+      
+      d3Output("d3")
+      
+    )
+
+    data <- list(
+      "MainData" = Maindata,
+      "hull_list" = Xtrem_points
+    )
+    
+    data_to_json <- function(data) {
+      jsonlite::toJSON(data, dataframe = "rows", auto_unbox = FALSE, rownames = TRUE)
+    } 
+
+        
     r2d3(
-      data=data, 
+      data= data_to_json(data),
       script = "main.js"
     )
   

@@ -1,102 +1,31 @@
-var EyesDirX =[];
-var EyesDirY =[];
-var zoom = 1;
-var graphValueMax = 0.5;
-var pointsArray = [null]
-var pointsOnlyX = []
-var pointsOnlyY = []
-
-
-svg.attr('width',900)
-.attr('height',900)
-.attr('style', "background: rgb(255, 255, 255);background-image: url(img/back02.png);background-repeat: no-repeat;background-position: 50% 40% ;background-size: 140%;");
-//.attr('style',"outline:solid 3px red; margin-top: 1%");
-
-    			
-var Mongraph = svg.append("g")
-  .attr('width',900)
-  .attr('height',"auto")
-  //.attr('style',"outline:solid 3px blue");
-  
-
-
-function PointLimit(x, y) {
-    this.x = x;
-    this.y = y;
-    this.angle = 0;
+var Global_Variables = {
+  zoom : 1,
+  graphValueMax : 0.5,
+  pointsArray : [null],
+  pointsOnlyX : [],
+  pointsOnlyY : [],
+  xScale : {},
+  yScale : {}
 }
 
-  function storeCoords(xVal, yVal) { pointsArray.push([xVal,yVal,0])}
-  
-  
- data.forEach((element,i) => {
-    EyesDirX.push(element.LocalGazeDirectionX)
-    EyesDirY.push(element.LocalGazeDirectionY)
-    if (element.is_hull == true) {
-    Xcoord = parseFloat(element.LocalGazeDirectionX,10)*1.02
-    Ycoord = parseFloat(element.LocalGazeDirectionY,10)*1.02
-    storeCoords(Xcoord,Ycoord)
-    }
-  }); 
-  
-  
-var xScale = d3.scaleLinear()
-    			.domain([graphValueMax/zoom, -graphValueMax/zoom]) 
-    			.range([0, 900]);
-var yScale = d3.scaleLinear()
-    			.domain([-graphValueMax/zoom, graphValueMax/zoom]) 
-    			.range([0,900]);
-    			
-svg.append('g')
-	.attr('transform', 'translate(450,0)')
-	.call(d3.axisLeft(xScale).ticks(10));
+function storeCoords(xVal, yVal) { Global_Variables.pointsArray.push([xVal,yVal,0])}
 
-
-svg.append('g')
-  .attr('transform', 'translate(0,450)')
-.call(d3.axisBottom(yScale).ticks(10)); 
-  
-  
- function getCoordEyesDir(i){
+function getCoordEyesDir(i){
    
    var Coord = [0,0];
-   Coord [0] = xScale(EyesDirX[i]*zoom);
-   Coord [1] = yScale(EyesDirY[i]*zoom);
+   Coord [0] = Global_Variables.xScale(data.MainData[i].LocalGazeDirectionX*Global_Variables.zoom);
+   Coord [1] = Global_Variables.yScale(data.MainData[i].LocalGazeDirectionY*Global_Variables.zoom);
    
     return([Coord[0],Coord[1]])
-  }
+}
   
-   function getCoordlimit(i){
+function getCoordlimit(i){
    
    var Coord = [0,0];
-   Coord [0] = xScale(pointsOnlyX[i]*zoom);
-   Coord [1] = yScale(pointsOnlyY[i]*zoom);
+   Coord [0] = Global_Variables.xScale(Global_Variables.pointsOnlyX[i]*Global_Variables.zoom);
+   Coord [1] = Global_Variables.yScale(Global_Variables.pointsOnlyY[i]*Global_Variables.zoom);
     return([Coord[0],Coord[1]])
-  }
-  
-      
-  EyesDirX.forEach(function(e,i){
-        
-  Mongraph.append("circle")
-  .attr("cx", (d) => getCoordEyesDir(i)[0] )
-  .attr("cy", (d) => getCoordEyesDir(i)[1] )
-  .attr("r", 1)
-  .style("fill","red");
-  })
-  
-  var line= d3.line()
-      .x((d,i) => getCoordEyesDir(i)[0])
-      .y((d,i) => getCoordEyesDir(i)[1])
-      .curve(d3.curveMonotoneX)
-  
-      
-  Mongraph.append("path")
-    .datum(data)
-    .attr("d", line)
-    .style("fill", "none")
-    .style("stroke", "blue")
-    .style("stroke-width", "1");
-
+}
 
 function findCenter(points) {
   var x = 0, y = 0, i, len = points.length;
@@ -121,37 +50,9 @@ function findAngles(c, points) {
   }
 }
 
-
-      // find center
-      var cent = findCenter(pointsArray);
-      
-      
-      // find angles
-      findAngles(cent, pointsArray);
-      
-      pointsArray = removeDuplicate(pointsArray)
-      
-      pointsArray = Sort(pointsArray);
-
-      ToAnotherList(pointsArray);
-
-    var line2= d3.line()
-      .x((d,i) => getCoordlimit(i)[0])
-      .y((d,i) => getCoordlimit(i)[1])
-      //.curve(d3.curveMonotoneX)
-      
-  Mongraph.append("path")
-    .datum(data)
-    .attr("d", line2)
-    .style("fill", "none")
-    .style("stroke", "red")
-    .style("stroke-width", "3");      
-      
-
-      
-  function Sort(points){
+function Sort(points){
     var i, j, len = points.length
-    for( i=1 ; i<len-1 ; i++){
+    for( i=0 ; i<len-1 ; i++){
       for( j=i+1 ; j<len ; j++){
         if ( points[i][2] > points[j][2] ) {
           c = points[i];
@@ -160,14 +61,10 @@ function findAngles(c, points) {
         }
       }
     }
-    c = points[0]
-    points[0] = points[1]
-    points[1] = c
-    
     return points
   }
   
-  function removeDuplicate (points){
+function removeDuplicate (points){
     var len = points.length;
     var test = [];
     
@@ -176,16 +73,102 @@ function findAngles(c, points) {
             test.push(points[i-1])
         }
       }
-      test.push(points[len-1])
       return test
     }
   
-  function ToAnotherList(points) {
+function ToAnotherList(points) {
     for (i=0; i< points.length; i++){
-      pointsOnlyX.push(points[i][0])
-      pointsOnlyY.push(points[i][1])
+      Global_Variables.pointsOnlyX.push(points[i][0])
+      Global_Variables.pointsOnlyY.push(points[i][1])
     }
-    pointsOnlyX.push(points[0][0])
-    pointsOnlyY.push(points[0][1])
+    Global_Variables.pointsOnlyX.push(points[0][0])
+    Global_Variables.pointsOnlyY.push(points[0][1])
   }
   
+function Init(){
+      svg.attr('width',900)
+    .attr('height',900)
+    .attr('style', "background: rgb(255, 255, 255);background-image: url(img/back02.png);background-repeat: no-repeat;background-position: 50% 40%    ;background-size: 140%;");
+
+    			
+    var Graph = svg.append("g")
+    .attr('width',900)
+    .attr('height',"auto")
+    
+    Global_Variables.xScale = d3.scaleLinear()
+    			.domain([Global_Variables.graphValueMax/Global_Variables.zoom, -Global_Variables.graphValueMax/Global_Variables.zoom]) 
+    			.range([0, 900]);
+    Global_Variables.yScale = d3.scaleLinear()
+    			.domain([-Global_Variables.graphValueMax/Global_Variables.zoom, Global_Variables.graphValueMax/Global_Variables.zoom]) 
+    			.range([0,900]);
+    			
+    svg.append('g')
+    	.attr('transform', 'translate(450,0)')
+    	.call(d3.axisLeft(Global_Variables.xScale).ticks(10));
+    
+    svg.append('g')
+      .attr('transform', 'translate(0,450)')
+      .call(d3.axisBottom(Global_Variables.yScale).ticks(10));   
+      
+      return Graph;
+}  
+  
+function Main(){
+  
+  Graph = Init();
+  
+   data.hull_list.forEach((element,i) => {              //The forEach parse a very low amount of data as it search through only hull points
+    Xcoord = parseFloat(data.MainData[data.hull_list[i]-1].LocalGazeDirectionX)*1.02      
+    Ycoord = parseFloat(data.MainData[data.hull_list[i]-1].LocalGazeDirectionY)*1.02
+    storeCoords(Xcoord,Ycoord)
+    }); 
+  
+      
+  data.MainData.forEach(function(e,i){
+        
+  Graph.append("circle")
+  .attr("cx", (d) => getCoordEyesDir(i)[0] )
+  .attr("cy", (d) => getCoordEyesDir(i)[1] )
+  .attr("r", 0.6)
+  .style("fill","rgb(255, 102, 102)");
+  })
+  
+  var line= d3.line()
+      .x((d,i) => getCoordEyesDir(i)[0])
+      .y((d,i) => getCoordEyesDir(i)[1])
+  
+      
+  Graph.append("path")
+    .datum(data.MainData)
+    .attr("d", line)
+    .style("fill", "none")
+    .style("stroke", "rgb(153, 153, 153)")
+    .style("stroke-width", "1");
+
+      // find center
+      var cent = findCenter(Global_Variables.pointsArray);
+      
+      // find angles
+      findAngles(cent, Global_Variables.pointsArray);
+      
+      Global_Variables.pointsArray = removeDuplicate(Global_Variables.pointsArray)
+      
+      Global_Variables.pointsArray = Sort(Global_Variables.pointsArray);
+
+      ToAnotherList(Global_Variables.pointsArray);
+      
+    var line2= d3.line()
+      .x((d,i) => getCoordlimit(i)[0])
+      .y((d,i) => getCoordlimit(i)[1])
+      
+      
+  Graph.append("path")
+    .datum(data.MainData)
+    .attr("d", line2)
+    .style("fill", "none")
+    .style("stroke", "rgb(0, 89, 179)")
+    .style("stroke-width", "3");      
+   
+}
+  
+Main()
