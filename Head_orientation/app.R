@@ -1,12 +1,12 @@
 #//////////////////////////////////////////////////
 #/*      CREATE Aalborg University               */
 #/*      aldsanms                                */
-#/*      nov-29-2022                             */
-#/*      app.R                                   */
+#/*      dec-01-2022                             */
 #/*      Head_orientation                        */
-#/*      v_1_2_1                                 */
+#/*      app.R                                   */
+#/*      v_1_2_2                                 */
 #//////////////////////////////////////////////////
-  
+# This program allows you to see some stats about the player's head orientation.  
   
 
 library(shiny)
@@ -89,10 +89,10 @@ server <- function(input, output) {
     r2d3(
       data= data_to_json(data),
       script = "js/main.js",
-      dependencies = list("js/wall.js", #v2_0_1
+      dependencies = list("js/wall.js", #v2_1_0
                           "js/utils.js", #v1_0_1
-                          "js/graphStat.js" #v1_0_0 
-      )
+                          "js/headOrientation.js" #v1_0_0 
+                      )
     )
   
     
