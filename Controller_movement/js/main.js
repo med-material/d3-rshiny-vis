@@ -21,8 +21,6 @@ var ChartOptions = {
       
         height : 800,//px // height of the window
         width : 800,//px // width of the window
-        
-        backgroundPicURL : "img/fond06.png", // background img of the window
     },
     
     wallSettings : {
