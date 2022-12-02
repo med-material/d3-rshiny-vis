@@ -49,7 +49,6 @@ data_to_json <- function(data) {
 } 
 
 data <- list(
-  "am" = AllMole,
   "wallInfo" = WallInfo,
   "aed" = (AllData %>% filter(filename == "data/log_Event.csv")),
   "ad" = (AllData %>% filter(filename == "data/log_Sample.csv"))
