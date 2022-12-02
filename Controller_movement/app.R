@@ -1,10 +1,10 @@
 #//////////////////////////////////////////////////
 #/*      CREATE Aalborg University               */
 #/*      aldsanms                                */
-#/*      nov-30-2022                             */
+#/*      dec-01-2022                             */
 #/*      app.R                                   */
 #/*      Controller_movement                     */
-#/*      v_1_2_2                                 */
+#/*      v_1_2_3                                 */
 #//////////////////////////////////////////////////
 
 
@@ -16,16 +16,32 @@ source("utils/loadrawdata.R")
 options("digits.secs"=6)
 
 
+#loading data
+AllData <- LoadFromDirectory("data")
 
 
+#retrieval of information necessary for the construction of the wall
+Moles <- unique(
+  AllData %>% 
+    filter(filename == "data/log_Event.csv") %>% 
+    select(MoleId,MolePositionLocalX,MolePositionLocalY,WallColumnCount,WallRowCount) %>%  
+    filter(!is.na(MoleId))
+)
 
-AllMole <- read.csv(file = "data/AllMoles.csv",stringsAsFactors = FALSE,
-                     strip.white = TRUE,
-                     sep = ";")
-
-
-D <- LoadFromDirectory("data")
-
+WallInfo <- data.frame( 
+  x_extrem = c(
+    min(as.double(Moles$MolePositionLocalX)),
+    max(as.double(Moles$MolePositionLocalX))
+  ),
+  y_extrem = c(
+    min(as.double(Moles$MolePositionLocalY)),
+    max(as.double(Moles$MolePositionLocalY))
+  ),
+  n_col_row = c(
+    unique(Moles$WallColumnCount),
+    unique(Moles$WallRowCount)
+  )
+)
 
 
 data_to_json <- function(data) {
@@ -34,8 +50,9 @@ data_to_json <- function(data) {
 
 data <- list(
   "am" = AllMole,
-  "aed" = (D %>% filter(filename == "data/log_Event.csv")),
-  "ad" = (D %>% filter(filename == "data/log_Sample.csv"))
+  "wallInfo" = WallInfo,
+  "aed" = (AllData %>% filter(filename == "data/log_Event.csv")),
+  "ad" = (AllData %>% filter(filename == "data/log_Sample.csv"))
   )
 
 ui <- fluidPage(
@@ -56,10 +73,10 @@ server <- function(input, output) {
     r2d3(
       data= data_to_json(data),
       script = "js/main.js",
-      dependencies = list("js/wall.js", #v_1_0_0 or higher
-                          "js/utils.js", #v_1_0_1 or higher
-                          "js/graphController.js", #v_1_0_0 or higher
-                          "js/slider.js" #v_1_0_0 or higher
+      dependencies = list("js/wall.js", #v2_1_0
+                          "js/utils.js", #v_1_0_1
+                          "js/graphController.js", #v_1_1_0
+                          "js/slider.js" #v_1_1_0
                           )
     )
   

@@ -2,20 +2,20 @@
 /*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      nov-22-2022                             */
+/*      dec-02-2022                             */
 /*      slider.js                               */
-/*      v1_0_0                                  */
+/*      v1_1_0                                  */
 //////////////////////////////////////////////////
 
 //Contains all the functions necessary for slider display.
 
 
-
-
 var slider = {
 
     sliderSettings : {
-    
+        sliderDiv : {},
+        sliderAxisSvg : {},
+        
         height : 60,//px
         width : 450,//px
         
@@ -47,10 +47,35 @@ var slider = {
         return 1;
     },
     
-    addSlider : function(){
+    updateLocalVariables : function(newSettings){
+      
+        slider.sliderSettings.height = newSettings.height;
+        slider.sliderSettings.width = newSettings.width;
+        
+        slider.sliderSettings.marginTop = newSettings.marginTop;
+        slider.sliderSettings.marginLeft = newSettings.marginLeft;
+        
+        slider.sliderSettings.sBtnHeight = newSettings.sBtnHeight;
+        slider.sliderSettings.sBtnWidth = newSettings.sBtnWidth;
+        slider.sliderSettings.sBtnMargingTop = newSettings.sBtnMargingTop;
+        slider.sliderSettings.sBtnMargingLeft = newSettings.sBtnMargingLeft;
+        
+        slider.sliderSettings.sliderHeight = newSettings.sliderHeight;
+        slider.sliderSettings.sliderWidth = newSettings.sliderWidth;
+        slider.sliderSettings.sliderMargingTop = newSettings.sliderMargingTop;
+        slider.sliderSettings.sliderMargingLeft = newSettings.sliderMargingLeft;
+        
+        slider.sliderSettings.n = (ChartOptions.DataArrays.dateMax-ChartOptions.DataArrays.dateMin)/14;
+        
+        slider.sliderSettings.dateScale = d3.scaleTime()
+            .domain([new Date(0),new Date(ChartOptions.DataArrays.dateMax.getTime() - ChartOptions.DataArrays.dateMin.getTime())])
+            .range([0, slider.sliderSettings.sliderWidth]);
+      
+    },
     
+    createSection : function(back){
         // Add a DIV for the slider
-        var divSlider = utils.addElement("div",back,
+        slider.sliderSettings.sliderDiv = utils.addElement("div",back,
             [
                 "display: flex;"+
                 "position:absolute;"+
@@ -64,9 +89,8 @@ var slider = {
             ]
         ).attr('id', "divSlider");
         
-        
-        // Add a SVG for the slider
-        var sliderAxis = utils.addElement("svg",divSlider,
+        // Add a SVG for the slider axis
+        slider.sliderSettings.sliderAxisSvg = utils.addElement("svg",slider.sliderSettings.sliderDiv,
             [
                 "display: flex;"+
                 "position:absolute;"+
@@ -78,63 +102,61 @@ var slider = {
                 "justify-content: center;"+
                 "align-items: flex-top"
             ]
-        )
-        
-        // Add a button start/stop
-        d3.select("#divSlider")
-            .append('button')
-            .attr('id', "startButton")
-            .attr('name', "startButton")
-            .attr('text', "startButton")
-            .attr('onclick', "startButtonOnclick()")
-            .attr('style', "position:absolute")
-            .attr('style', 
-                "width:"+slider.sliderSettings.sBtnWidth+"px;"+
-                "height:"+slider.sliderSettings.sBtnHeight+"px;"+
-                "margin-top:"+slider.sliderSettings.sBtnMargingTop+"px;"+
-                "margin-left:"+slider.sliderSettings.sBtnMargingLeft+"px"
-            );
-        
-        // Add a scrollbar
-        d3.select("#divSlider")
-            .append('input')
-            .attr('type', "range")
-            .attr('min', "0")
-            .attr('max', slider.sliderSettings.n)
-            .attr('id', "slider")
-            .attr('name', "slider")
-            .attr('onmousemove', "sliderChange()")
-            .attr('style', 
-                "width:"+slider.sliderSettings.sliderWidth+"px;"+
-                "height:"+slider.sliderSettings.sliderHeight+"px;"+
-                "margin-top:"+slider.sliderSettings.sliderMargingTop+"px;"+
-                "margin-left:"+slider.sliderSettings.sliderMargingLeft+"px"
-            );
-        
-        // Save button element on a variable
-        slider.sliderSettings.objStartButton = document.getElementById('startButton');
-        slider.changeStartButtonValues();
-        
-        // Save  scrollbar on a variable
-        slider.sliderSettings.objSlider = document.getElementById('slider');
-        
-        // Add scale's legend
-        sliderAxis.append('g')
-            .call(d3.axisBottom(slider.sliderSettings.dateScale).tickFormat(d3.timeFormat("%s")).ticks(d3.timeSecond .every(15)));
-        
-        
-        },
-        
-        changeStartButtonValues : function(){
-            if(mouvementSettings.isStart){
-                slider.sliderSettings.objStartButton.textContent = 'Stop';
-            }else{
-                slider.sliderSettings.objStartButton.textContent = 'Start';
-            }
-        }
+        );
+    },
     
+    addSlider : function(){
     
-
-
-
+          // Add a scrollbar
+          slider.sliderSettings.sliderDiv
+              .append('input')
+              .attr('type', "range")
+              .attr('min', "0")
+              .attr('max', slider.sliderSettings.n)
+              .attr('id', "slider")
+              .attr('name', "slider")
+              .attr('onmousemove', "sliderChange()")
+              .attr('style', 
+                  "width:"+slider.sliderSettings.sliderWidth+"px;"+
+                  "height:"+slider.sliderSettings.sliderHeight+"px;"+
+                  "margin-top:"+slider.sliderSettings.sliderMargingTop+"px;"+
+                  "margin-left:"+slider.sliderSettings.sliderMargingLeft+"px"
+              );
+          
+          // Save button element on a variable
+          slider.sliderSettings.objStartButton = document.getElementById('startButton');
+          slider.changeStartButtonValues();
+          
+          // Save  scrollbar on a variable
+          slider.sliderSettings.objSlider = document.getElementById('slider');
+          
+          // Add scale's legend
+          slider.sliderSettings.sliderAxisSvg.append('g')
+              .call(d3.axisBottom(slider.sliderSettings.dateScale).tickFormat(d3.timeFormat("%s")).ticks(d3.timeSecond .every(15)));
+      },
+      
+      addButton : function(){
+          // Add a button start/stop
+          slider.sliderSettings.sliderDiv
+              .append('button')
+              .attr('id', "startButton")
+              .attr('name', "startButton")
+              .attr('text', "startButton")
+              .attr('onclick', "startButtonOnclick()")
+              .attr('style', "position:absolute")
+              .attr('style', 
+                  "width:"+slider.sliderSettings.sBtnWidth+"px;"+
+                  "height:"+slider.sliderSettings.sBtnHeight+"px;"+
+                  "margin-top:"+slider.sliderSettings.sBtnMargingTop+"px;"+
+                  "margin-left:"+slider.sliderSettings.sBtnMargingLeft+"px"
+          );
+      },
+      
+      changeStartButtonValues : function(){
+          if(ChartOptions.mouvementSettings.isStart){
+              slider.sliderSettings.objStartButton.textContent = 'Stop';
+          }else{
+              slider.sliderSettings.objStartButton.textContent = 'Start';
+          };
+      },
 }
