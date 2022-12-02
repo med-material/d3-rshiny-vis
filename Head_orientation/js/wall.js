@@ -5,46 +5,45 @@
 /*      wall.js                                 */
 /*      v2_1_0                                  */
 //////////////////////////////////////////////////
-
 //Contains the various global functions for the operation of the program.
 
 
 var wall = {
   
     settings : {
-        WallSection : {},
+        WallSection : {}, // Section for the wall
         
-        height : 0,//px // height of the graph
-        width : 0,//px // width of the graph
+        height : 0, //px // Height of the graph
+        width : 0, //px // Width of the graph
         
-        marginTop : 0,//px // margin of the graph compared to the top of the window
-        marginLeft : 0,//px // margin of the graph compared to the left of the window
-        
-        
-        yScale : {}, // value to pixel for the y conversion obj
-        xScale : {}, // value to pixel for the x conversion obj
+        marginTop : 0, //px // Margin of the graph compared to the top of the window
+        marginLeft : 0, //px // Margin of the graph compared to the left of the window
         
         
-        idMoles : [], // list of all moles ID
-        objMoles : [], // list of all moles obj (points into SVG) 
+        yScale : {}, // Value to pixel for the y conversion obj
+        xScale : {}, // Value to pixel for the x conversion obj
         
         
-        xMin : -5,//minimum x value for the graph
-        xMax : 5,//maximum x value for the graph
-        
-        yMin : -3,//minimum y value for the graph
-        yMax : 3,//maximum y value for the graph
+        idMoles : [], // List of all moles ID
+        objMoles : [], // List of all moles obj (points into SVG) 
         
         
-        molesSize : 0,//px
-        molesColor : "", // default color of the moles
+        xMin : -5, // Minimum x value for the graph
+        xMax : 5, // Maximum x value for the graph
+        
+        yMin : -3, // Minimum y value for the graph
+        yMax : 3, // Maximum y value for the graph
+        
+        
+        molesSize : 0, //px
+        molesColor : "", // Default color of the moles
         
         laserSize : 0,//px
-        laserColor : "", // default color of the laser
+        laserColor : "", // Default color of the laser
+        objLaser : {},
         
-        indexMole : 0, // curent lines into moles CSV file
-        indexLaser : 0, // curent lines into laser CSV file
-        indexController : 0, //curent lines into controller CSV file
+        indexMole : 0, // Curent lines into moles CSV file
+        indexLaser : 0, // Curent lines into laser CSV file
     },
     
     
@@ -54,7 +53,7 @@ var wall = {
     },
     
     updateLocalVariables : function(newSettings){
-      
+
         wall.settings.height = newSettings.height;
         wall.settings.width = newSettings.width;
         
@@ -66,7 +65,6 @@ var wall = {
         
         wall.settings.laserSize = newSettings.laserSize;
         wall.settings.laserColor = newSettings.laserColor;
-        
         
         // Calculation of the extreme values of the wall
         //                     =                       Xmax   +   the size of a mole * 2
@@ -87,7 +85,7 @@ var wall = {
           .range([(0), (wall.settings.width)]);
     },
     
-    createWallSection : function(back){
+    createSection : function(back){
       
         // Add SVG for wall display   
         wall.settings.WallSection = utils.addElement("svg",back,
@@ -120,11 +118,11 @@ var wall = {
             ){
               // If the mole is at an angle
             }else{
-              // Tf the mole is not at an angle
+              // If the mole is not at an angle
               if((r+1) < 10){
-                wall.settings.idMoles.push((c+1)+"0"+(r+1));
+                wall.settings.idMoles.push(parseInt((c+1)+"0"+(r+1)));
               }else{
-                wall.settings.idMoles.push((c+1)+""+(r+1));
+                wall.settings.idMoles.push(parseInt((c+1)+""+(r+1)));
               };
               
               // Adding moles to the wall
@@ -139,9 +137,9 @@ var wall = {
     changeMolesState : function(){
     
         // If the target date is less than the date in the index of events
-        if(new Date(wall.settings.indexDate) >= new Date(data.aed[wall.settings.indexMole]['Timestamp'])){
-            while(new Date(wall.settings.indexDate) >= new Date(data.aed[wall.settings.indexMole]['Timestamp'])){
-                
+        if(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.aed[wall.settings.indexMole]['Timestamp'])){
+            while(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.aed[wall.settings.indexMole]['Timestamp'])){
+
                 // Retrieve the object associated with the mole
                 var thisMole = wall.settings.objMoles[wall.settings.idMoles.indexOf(parseInt(data.aed[wall.settings.indexMole]['MoleId']))];
                 
@@ -208,7 +206,7 @@ var wall = {
         var coord = [0,0];
         
         if(data.ad[i]['RightControllerLaserPosWorldX'] != "NULL")coord[0] =  wall.settings.xScale(data.ad[i]['RightControllerLaserPosWorldX']);
-        if(data.ad[i]['RightControllerLaserPosWorldY'] != "NULL")coord[1] =  wall.settings.yScale(data.ad[i]['RightControllerLaserPosWorldY']);
+        if(data.ad[i]['RightControllerLaserPosWorldY'] != "NULL")coord[1] =  wall.settings.yScale(data.ad[i]['RightControllerLaserPosWorldY']-1.5);
         
         return coord;
     },
@@ -216,8 +214,8 @@ var wall = {
     changeLaserLocation : function(){
     
         // If the target date is less than the date in the index of events
-        if(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
-            while(new Date(DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
+        if(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
+            while(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
             
                 wall.settings.objLaser.transition()
                     .duration(14)
@@ -229,7 +227,6 @@ var wall = {
             };
         };
     },
-
 };
 
 

@@ -102,7 +102,7 @@ function start(){
     
     
     // Create the wall section
-    wall.createWallSection(chartOptions.windowSettings.windowSection);
+    wall.createSection(chartOptions.windowSettings.windowSection);
     
     // Add moles to the wall      
     wall.addMolesToWall();
