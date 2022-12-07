@@ -1,12 +1,11 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-01-2022                             */
+/*      dec-07-2022                             */
 /*      Head_orientation                        */
 /*      main.js                                 */
-/*      v_1_2_2                                 */
+/*      v_1_2_3                                 */
 //////////////////////////////////////////////////
-
 // This program allows you to see some stats about the player's head orientation. 
 
     

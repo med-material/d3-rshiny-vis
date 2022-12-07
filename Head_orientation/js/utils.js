@@ -5,7 +5,6 @@
 /*      utils.js                                */
 /*      v1_0_1                                  */
 //////////////////////////////////////////////////
-
 //Contains the various global functions for the operation of the program.
 
 

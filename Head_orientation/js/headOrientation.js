@@ -1,19 +1,17 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-01-2022                             */
+/*      dec-07-2022                             */
 /*      headOrientation.js                      */
-/*      v1_0_0                                  */
+/*      v1_0_1                                  */
 //////////////////////////////////////////////////
 
-//Contains all the functions necessary for the operation of the wall display.
+//Contains all the functions necessary for the operation of the graph display.
 
 
 var headOrientation = {
 
     settings : {
-        headOrientationSection : {},
-        
         height : 0,//px
         width : 0,//px
         
@@ -34,21 +32,22 @@ var headOrientation = {
         
         greenColor : "",
         yellowColor : "",
-        
-        
-        valueMax : 2,
-
-        
-        leastPresentValuePercentage : 0.12, // % of the least representative values
-        
-        leastPresentValueLeft : 0, // value at which "leastPresentValuePercentage"% of all values are less than it
-        leastPresentValueRight : 0, // value at which "1-leastPresentValuePercentage"% of all values are greater than it
-        
-        yRotMedian : 0, // median of the rotation value
-        yRotMin : 0, // value min
-        yRotMax : 0, // value max
-    
     },
+    
+    element : {
+        headOrientationSection : {},
+    },
+    
+    leastPresentValuePercentage : 0.12, // % of the least representative values
+     
+    leastPresentValueLeft : 0, // value at which "leastPresentValuePercentage"% of all values are less than it
+    leastPresentValueRight : 0, // value at which "1-leastPresentValuePercentage"% of all values are greater than it
+    
+    yRotMedian : 0, // median of the rotation value
+    yRotMin : 0, // value min
+    yRotMax : 0, // value max
+      
+      
     
     test : function(){
         return 1;
@@ -56,49 +55,29 @@ var headOrientation = {
     
     updateLocalVariables : function(newSettings){
       
-        headOrientation.settings.height = newSettings.height;
-        headOrientation.settings.width = newSettings.width;
-        
-        headOrientation.settings.marginTop = newSettings.marginTop;
-        headOrientation.settings.marginLeft = newSettings.marginLeft;
-        
-        headOrientation.settings.headSize = newSettings.headSize;
-        headOrientation.settings.headColor = newSettings.headColor;
-        
-        headOrientation.settings.legendTopTextSize = newSettings.legendTopTextSize;
-        headOrientation.settings.legendTopTextColor = newSettings.legendTopTextColor;
-        
-        headOrientation.settings.legendBottomTextSize = newSettings.legendBottomTextSize;
-        headOrientation.settings.legendBottomTextColor = newSettings.legendBottomTextColor;
-        
-        headOrientation.settings.circleLineColor = newSettings.circleLineColor;
-        headOrientation.settings.medianLineColor = newSettings.medianLineColor;
-        
-        headOrientation.settings.greenColor = newSettings.greenColor;
-        headOrientation.settings.yellowColor = newSettings.yellowColor;
-        
-        
+        headOrientation.settings = newSettings;
+  
         
         // Retrieval of the largest value of the rotation values
-        headOrientation.settings.yRotMax = data.hearCamRotSort[parseInt(data.hearCamRotSort.length-1)];
+        headOrientation.yRotMax = data.hearCamRotSort[parseInt(data.hearCamRotSort.length-1)];
        
         // Retrieval of the smallest value of the rotation values
-        headOrientation.settings.yRotMin =  data.hearCamRotSort[0]; 
+        headOrientation.yRotMin =  data.hearCamRotSort[0]; 
         
         // Get median value
-        headOrientation.settings.yRotMedian = data.hearCamRotSort[parseInt(data.hearCamRotSort.length/2)];
+        headOrientation.yRotMedian = data.hearCamRotSort[parseInt(data.hearCamRotSort.length/2)];
         
         // Get least present value left
-        headOrientation.settings.leastPresentValueLeft = data.hearCamRotSort[parseInt(data.hearCamRotSort.length*headOrientation.settings.leastPresentValuePercentage)];
+        headOrientation.leastPresentValueLeft = data.hearCamRotSort[parseInt(data.hearCamRotSort.length*headOrientation.leastPresentValuePercentage)];
         
         // Get least present value right
-        headOrientation.settings.leastPresentValueRight = data.hearCamRotSort[parseInt(data.hearCamRotSort.length - data.hearCamRotSort.length*headOrientation.settings.leastPresentValuePercentage)];
+        headOrientation.leastPresentValueRight = data.hearCamRotSort[parseInt(data.hearCamRotSort.length - data.hearCamRotSort.length*headOrientation.leastPresentValuePercentage)];
     },
     
     // Create an section for graph 
     createHeadOrientationSection : function(back){
          
-        headOrientation.settings.headOrientationSection = back.append('div') 
+        headOrientation.element.headOrientationSection = back.append('div') 
                   .attr('style', 
                       "width:" +headOrientation.settings.width+"px;"+
                       "height:" +(headOrientation.settings.height)+"px;"+
@@ -112,7 +91,7 @@ var headOrientation = {
     // Add a point as an head 
     addHeadPoint : function(){ 
       
-        headOrientation.settings.headOrientationSection
+        headOrientation.element.headOrientationSection
             .append('div')
             .attr('id', "headPoint")
             .attr('style', 
@@ -165,7 +144,7 @@ var headOrientation = {
         
         
         // Add SVG section on the graph (to add D3 point inside)
-        var headOrientationSvg =  headOrientation.settings.headOrientationSection 
+        var headOrientationSvg =  headOrientation.element.headOrientationSection 
                       .append("svg")
                       .attr('id', "addHeadOrientationGraph")
                       .attr("width", graphSett.width)
@@ -174,7 +153,7 @@ var headOrientation = {
                       .attr("transform", "translate(" + graphSett.width / 2 + "," + graphSett.height+ ")");
                       
         // Add SVG section on the graph (to add D3 point inside)              
-        var graphLegendSvg =  headOrientation.settings.headOrientationSection 
+        var graphLegendSvg =  headOrientation.element.headOrientationSection 
                       .append("svg")
                       .attr('id', "addHeadOrientationGraphLegend")
                       .attr("width", graphSett.width)
@@ -184,7 +163,7 @@ var headOrientation = {
                       .attr("transform", "translate(" + graphSett.width / 2 + "," + (graphSett.height + 50)+ ")");
                       
         // Add SVG section on the graph (to add D3 point inside)             
-        var bottomTextSvg =  headOrientation.settings.headOrientationSection 
+        var bottomTextSvg =  headOrientation.element.headOrientationSection 
                       .append("svg")
                       .attr('id', "bottomTextSvg")
                       .attr("width", graphSett.width)
@@ -204,29 +183,29 @@ var headOrientation = {
       
       
         // Add min rotation value to the graph 
-        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(graphSett.yRotMin * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(graphSett.yRotMin- 6) +" , 0, 0)"));
+        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(headOrientation.yRotMin * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,headOrientation.legendTopTextColor,("rotate( "+(headOrientation.yRotMin- 6) +" , 0, 0)"));
   
 
 
         // Add the least present value arc on the left to the graph
-        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(graphSett.yRotMin),(graphSett.leastPresentValueLeft),graphSett.circleLineColor,graphSett.yellowColor,2);
+        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(headOrientation.yRotMin),(headOrientation.leastPresentValueLeft),graphSett.circleLineColor,graphSett.yellowColor,2);
         
         // Add the least present value text on the left to the graph
-        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(graphSett.leastPresentValueLeft * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(graphSett.leastPresentValueLeft- 6) +" , 0, 0)"));
+        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(headOrientation.leastPresentValueLeft * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(headOrientation.leastPresentValueLeft- 6) +" , 0, 0)"));
         
 
         // Add 2nd arc on graph
-        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(graphSett.leastPresentValueLeft),(graphSett.leastPresentValueRight),graphSett.circleLineColor,graphSett.greenColor,2);
+        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(headOrientation.leastPresentValueLeft),(headOrientation.leastPresentValueRight),graphSett.circleLineColor,graphSett.greenColor,2);
         
         // Add 2rd arc text on graph
-        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(graphSett.leastPresentValueRight * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(graphSett.leastPresentValueRight- 6) +" , 0, 0)"));
+        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(headOrientation.leastPresentValueRight * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,headOrientation.legendTopTextColor,("rotate( "+(headOrientation.leastPresentValueRight- 6) +" , 0, 0)"));
         
         
         // Add the least present value arc on the Right to the graph
-        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(graphSett.leastPresentValueRight),(graphSett.yRotMax),graphSett.circleLineColor,graphSett.yellowColor,2);
+        headOrientation.addArcOnSvg(headOrientationSvg,0,(graphSett.height - 4),(headOrientation.leastPresentValueRight),(headOrientation.yRotMax),graphSett.circleLineColor,graphSett.yellowColor,2);
 
         // Add the least present value text on the Right to the graph
-        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(graphSett.yRotMax * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(graphSett.yRotMax - 3) +" , 0, 0)"));
+        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(headOrientation.yRotMax * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(headOrientation.yRotMax - 3) +" , 0, 0)"));
           
           
           
@@ -238,17 +217,17 @@ var headOrientation = {
           .attr("y1", -graphSett.height  )     
           .attr("x2", 0)    
           .attr("y2",  0)
-          .attr("transform",  "rotate( "+graphSett.yRotMedian +" , 0, 0)")
+          .attr("transform",  "rotate( "+headOrientation.yRotMedian +" , 0, 0)")
           .style("stroke", graphSett.medianLineColor)
           .style('stroke-width', '3px')
           .style("stroke-dasharray", ("3,3"))
           .style("fill", "none");
         
         // Add median value text
-        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(graphSett.yRotMedian * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(graphSett.yRotMedian - 3) +" , 0, 0)"));
+        headOrientation.addTextOnSvg(graphLegendSvg,(Math.round(headOrientation.yRotMedian * 10) / 10),0,(-graphSett.height*1.02),graphSett.legendTopTextSize,graphSett.legendTopTextColor,("rotate( "+(headOrientation.yRotMedian - 3) +" , 0, 0)"));
         
         
-        headOrientation.settings.headOrientationSection
+        headOrientation.element.headOrientationSection
             .append('div')
             .attr('id', "headPoint")
             .attr('style', 
