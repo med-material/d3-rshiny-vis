@@ -2,9 +2,9 @@
 /*      Graph D3.js ControllerMovement          */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-01-2022                             */
+/*      dec-07-2022                             */
 /*      main.js                                 */
-/*      v_1_2_3                                 */
+/*      v_1_2_4                                 */
 //////////////////////////////////////////////////
 
 //Allows visualization of controller movement and mole states.
@@ -43,9 +43,10 @@ var ChartOptions = {
         
         marginTop : 273,//px
         marginLeft : 175,//px
-        
+
+        valueMax : 2,
         zoom : 1.6,
-        
+
         pointSize : 2,//px
         pointColor : "#0055FF11", 
         
@@ -73,17 +74,15 @@ var ChartOptions = {
         sliderMargingLeft : 10,//px
     },
     
-    DataArrays : {
-        dateMin : {}, // first date into CSV files
-        dateMax : {}, // last date into CSV files
-        
-        indexDate : {}, //curent date
-    },
-    
     mouvementSettings : {
         isStart : false,
         index : 0,
     },
+    
+    dateMin : {}, // first date into CSV files
+    dateMax : {}, // last date into CSV files
+    
+    indexDate : {}, //curent date
 };
 
 
@@ -121,11 +120,11 @@ function initialization(){
             );
             
     // Get date min and max
-    ChartOptions.DataArrays.dateMin = new Date(data.ad[0]['Timestamp']);
-    ChartOptions.DataArrays.dateMax = new Date(data.ad[data.ad.length-2]['Timestamp']);
+    ChartOptions.dateMin = new Date(data.ad[0]['Timestamp']);
+    ChartOptions.dateMax = new Date(data.ad[data.ad.length-2]['Timestamp']);
     
     // Initialize index date
-    ChartOptions.DataArrays.indexDate = ChartOptions.DataArrays.dateMin;
+    ChartOptions.indexDate = ChartOptions.dateMin;
     
     // Update all variables
     wall.updateLocalVariables(ChartOptions.wallSettings);
@@ -203,10 +202,10 @@ function clock(){
         ChartOptions.mouvementSettings.index ++;
         
         // Add 100  Msecond to the curent index date
-        ChartOptions.DataArrays.indexDate = new Date(ChartOptions.DataArrays.dateMin.getTime() + 14*ChartOptions.mouvementSettings.index);  
+        ChartOptions.indexDate = new Date(ChartOptions.dateMin.getTime() + 14*ChartOptions.mouvementSettings.index);  
       
         // save slider value
-        slider.sliderSettings.objSlider.value = ChartOptions.mouvementSettings.index;
+        slider.element.objSlider.value = ChartOptions.mouvementSettings.index;
     };
     
     // Call clock function in 14 ms
@@ -229,33 +228,33 @@ window.sliderChange = function(){
     
     }else{
   
-      if(slider.sliderSettings.objSlider.value != ChartOptions.mouvementSettings.index){
+      if(slider.element.objSlider.value != ChartOptions.mouvementSettings.index){
         
           // Reset moles
           wall.resetMoles();
     
-          ChartOptions.mouvementSettings.index = slider.sliderSettings.objSlider.value;
+          ChartOptions.mouvementSettings.index = slider.element.objSlider.value;
           
           // Add 14 ms to the index date
-          ChartOptions.DataArrays.indexDate = new Date(ChartOptions.DataArrays.dateMin.getTime()  + 14*ChartOptions.mouvementSettings.index);
+          ChartOptions.indexDate = new Date(ChartOptions.dateMin.getTime()  + 14*ChartOptions.mouvementSettings.index);
           
           // Reset all indexes
-          wall.settings.indexMole = 0;
-          wall.settings.indexLaser = 0;
-          graphController.graphSettings.indexController = 0;
+          wall.indexMole = 0;
+          wall.indexLaser = 0;
+          graphController.indexController = 0;
     
           // If the target date is less than the date in the laser's index of events
-          if(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
-              while(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[wall.settings.indexLaser]['Timestamp'])){
-                  wall.settings.indexLaser++;
+          if(new Date(ChartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
+              while(new Date(ChartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
+                  wall.indexLaser++;
               };
           };
       
       
           // If the target date is less than the date in the controller's index of events
-          if(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[graphController.graphSettings.indexController]['Timestamp'])){
-              while(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[graphController.graphSettings.indexController]['Timestamp'])){
-                  graphController.graphSettings.indexController++;
+          if(new Date(ChartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
+              while(new Date(ChartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
+                  graphController.indexController++;
               };
           };
       

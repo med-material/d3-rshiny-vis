@@ -1,10 +1,10 @@
 #//////////////////////////////////////////////////
 #/*      CREATE Aalborg University               */
 #/*      aldsanms                                */
-#/*      dec-01-2022                             */
+#/*      dec-07-2022                             */
 #/*      app.R                                   */
 #/*      Controller_movement                     */
-#/*      v_1_2_3                                 */
+#/*      v_1_2_4                                 */
 #//////////////////////////////////////////////////
 
 
@@ -72,10 +72,10 @@ server <- function(input, output) {
     r2d3(
       data= data_to_json(data),
       script = "js/main.js",
-      dependencies = list("js/wall.js", #v2_1_0
+      dependencies = list("js/wall.js", #v2_1_1
                           "js/utils.js", #v_1_0_1
-                          "js/graphController.js", #v_1_1_0
-                          "js/slider.js" #v_1_1_0
+                          "js/graphController.js", #v_1_1_1
+                          "js/slider.js" #v_1_1_1
                           )
     )
   

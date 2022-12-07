@@ -1,46 +1,49 @@
 //////////////////////////////////////////////////
-/*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-02-2022                             */
-/*      controller.js                           */
-/*      v1_1_0                                  */
+/*      dec-07-2022                             */
+/*      GraphController.js                      */
+/*      v1_1_1                                  */
 //////////////////////////////////////////////////
-//Contains all the functions necessary for the operation of the wall display.
+//Contains all the functions necessary for the operation of the graph display.
 
 
 var graphController = {
   
-  graphSettings : {
-        graphControllerDiv : {},
-        graphControllerSvg : {},
+  settings : {
+        height : 0,//px
+        width : 0,//px
         
-        height : 446,//px
-        width : 446,//px
-        
-        marginTop : 273,//px
-        marginLeft : 175,//px
-        
-        yScale : {}, // value to pixel for the y conversion obj
-        xScale : {}, // value to pixel for the x conversion obj
-        
-        
-        valueMax : 2,
-        zoom : 1.6,
-        
-        objController : {},
-        
-        pointSize : 2,//px
+        marginTop : 0,//px
+        marginLeft : 0,//px
+
+        valueMax : 0,
+        zoom : 0,
+
+        pointSize : 0,//px
         pointColor : "#0055FF11", 
         
-        
         controllerPicURL : "img/controller.png",
-        controllerHeight : 40,//px
-        controllerWidth : 40,//px
-        
-        indexController : 0,
-    
+        controllerHeight : 0,//px
+        controllerWidth : 0,//px
     },
+    
+    scale : {
+        yScale : {}, // value to pixel for the y conversion obj
+        xScale : {}, // value to pixel for the x conversion obj
+    },
+    
+    element : {
+        graphControllerDiv : {},
+        graphControllerSvg : {},
+        objController : {},
+    },
+    
+    indexController : 0,
+    
+    
+    
+    
   
     test : function(){
         return 1;
@@ -48,50 +51,36 @@ var graphController = {
     
     updateLocalVariables : function(newSettings){
       
-        graphController.graphSettings.height = newSettings.height;
-        graphController.graphSettings.width = newSettings.width;
-        
-        graphController.graphSettings.marginTop = newSettings.marginTop;
-        graphController.graphSettings.marginLeft = newSettings.marginLeft;
-        
-        graphController.graphSettings.zoom = newSettings.zoom;
-        
-        graphController.graphSettings.pointSize = newSettings.pointSize;
-        graphController.graphSettings.pointColor = newSettings.pointColor;
-        
-        graphController.graphSettings.controllerPicURL = newSettings.controllerPicURL;
-        graphController.graphSettings.controllerHeight = newSettings.controllerHeight;
-        graphController.graphSettings.controllerWidth = newSettings.controllerWidth;
-        
+        graphController.settings = newSettings;
         
         // Declaration of the graph domains
-        graphController.graphSettings.yScale = d3.scaleLinear()
-            .domain([(graphController.graphSettings.valueMax/graphController.graphSettings.zoom), (-graphController.graphSettings.valueMax/graphController.graphSettings.zoom)]) 
-            .range([(0), (graphController.graphSettings.height)]);
+        graphController.scale.yScale = d3.scaleLinear()
+            .domain([(graphController.settings.valueMax/graphController.settings.zoom), (-graphController.settings.valueMax/graphController.settings.zoom)]) 
+            .range([(0), (graphController.settings.height)]);
         		
-        graphController.graphSettings.xScale = d3.scaleLinear()
-            .domain([(-graphController.graphSettings.valueMax/graphController.graphSettings.zoom), (graphController.graphSettings.valueMax/graphController.graphSettings.zoom)]) 
-            .range([(0), (graphController.graphSettings.width)]);
+        graphController.scale.xScale = d3.scaleLinear()
+            .domain([(-graphController.settings.valueMax/graphController.settings.zoom), (graphController.settings.valueMax/graphController.settings.zoom)]) 
+            .range([(0), (graphController.settings.width)]);
        
     },
     
     createSection : function(back){
       
-        graphController.graphSettings.graphControllerDiv = utils.addElement("div",back,
+        graphController.element.graphControllerDiv = utils.addElement("div",back,
               [
-                "width:" +graphController.graphSettings.width+"px;"+
-                "height:" +graphController.graphSettings.height+"px;"+
+                "width:" +graphController.settings.width+"px;"+
+                "height:" +graphController.settings.height+"px;"+
                 "position:absolute;"+
-                "margin-left:"+(graphController.graphSettings.marginLeft)+"px;"+
-                "margin-top:"+graphController.graphSettings.marginTop+"px;"
+                "margin-left:"+(graphController.settings.marginLeft)+"px;"+
+                "margin-top:"+graphController.settings.marginTop+"px;"
               ]
         );
   
          // Create an SVG for graph
-         graphController.graphSettings.graphControllerSvg = utils.addElement("svg",graphController.graphSettings.graphControllerDiv,
+         graphController.element.graphControllerSvg = utils.addElement("svg",graphController.element.graphControllerDiv,
               [
-                "width:"+graphController.graphSettings.width+"px;"+
-                "height:"+graphController.graphSettings.height+"px;"+
+                "width:"+graphController.settings.width+"px;"+
+                "height:"+graphController.settings.height+"px;"+
                 "position:absolute;"
               ]
          );   
@@ -100,18 +89,18 @@ var graphController = {
     addController : function(){
       
         // Create a DIV with a background controller image
-        graphController.graphSettings.objController = utils.addElement("div",graphController.graphSettings.graphControllerDiv,
+        graphController.element.objController = utils.addElement("div",graphController.element.graphControllerDiv,
             [
                 "left:"+200+"px;"+
                 "top:"+200+"px;"+
                 "display: flex;"+
                 "position:absolute;"+
                 "background: rgb(50, 50, 50, 00);"+
-                "width:"+(graphController.graphSettings.controllerWidth)+"px;"+
-                "height:"+(graphController.graphSettings.controllerHeight)+"px;"+
+                "width:"+(graphController.settings.controllerWidth)+"px;"+
+                "height:"+(graphController.settings.controllerHeight)+"px;"+
                 "justify-content: center;"+
                 "align-items: flex-top;"+
-                "background-image: url("+graphController.graphSettings.controllerPicURL+");"+
+                "background-image: url("+graphController.settings.controllerPicURL+");"+
                 "background-repeat: no-repeat;"+
                 "background-position: center;"+
                 "background-size: 100% 100%;"
@@ -123,23 +112,23 @@ var graphController = {
     addControllerPath : function(){
         
         // Add controller path on graph
-        graphController.graphSettings.graphControllerSvg
+        graphController.element.graphControllerSvg
             .selectAll("dot")
             .data(data.ad)
             .enter()
             .append("circle")
             .attr("cx", (d,i) => graphController.getControllerCoordPx(i)[0] )
             .attr("cy", (d,i) => graphController.getControllerCoordPx(i)[1] )
-            .attr("r", graphController.graphSettings.pointSize)
-            .style("fill", graphController.graphSettings.pointColor);
+            .attr("r", graphController.settings.pointSize)
+            .style("fill", graphController.settings.pointColor);
         
     },
     
     // Convert controller's coordinates to pixel values
     getControllerCoordPx : function(i){
         coord = [0,0,0];
-        if(data.ad[i]['RightControllerPosWorldX'] != "NULL")coord[0] = graphController.graphSettings.xScale((data.ad[i]['RightControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.graphSettings.zoom);
-        if(data.ad[i]['RightControllerPosWorldZ'] != "NULL")coord[1] = graphController.graphSettings.yScale((data.ad[i]['RightControllerPosWorldZ']-data.ad[i]['HeadCameraPosWorldZ'])*graphController.graphSettings.zoom);
+        if(data.ad[i]['RightControllerPosWorldX'] != "NULL")coord[0] = graphController.scale.xScale((data.ad[i]['RightControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom);
+        if(data.ad[i]['RightControllerPosWorldZ'] != "NULL")coord[1] = graphController.scale.yScale((data.ad[i]['RightControllerPosWorldZ']-data.ad[i]['HeadCameraPosWorldZ'])*graphController.settings.zoom);
         if(data.ad[i]['RightControllerRotEulerY'] != "NULL")coord[2] = data.ad[i]['RightControllerRotEulerY'];
         
         return coord;
@@ -148,28 +137,28 @@ var graphController = {
     changeControllerLocation : function(){
       
         // If the target date is less than the date in the index of events
-        if(new Date(ChartOptions.DataArrays.indexDate) >= new Date(data.ad[graphController.graphSettings.indexController]['Timestamp'])){
-            while(new Date(ChartOptions.DataArrays.indexDate) >=new Date(data.ad[graphController.graphSettings.indexController]['Timestamp'])){
+        if(new Date(ChartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
+            while(new Date(ChartOptions.indexDate) >=new Date(data.ad[graphController.indexController]['Timestamp'])){
             
-                graphController.graphSettings.objController.transition()
+                graphController.element.objController.transition()
                 .duration(14).attr('style', 
-                    "left:"+(graphController.getControllerCoordPx(graphController.graphSettings.indexController)[0])+"px;"+
-                    "top:"+(graphController.getControllerCoordPx(graphController.graphSettings.indexController)[1])+"px;"+
+                    "left:"+(graphController.getControllerCoordPx(graphController.indexController)[0])+"px;"+
+                    "top:"+(graphController.getControllerCoordPx(graphController.indexController)[1])+"px;"+
                     "display: flex;"+
                     "position:absolute;"+
                     "background: rgb(50, 50, 50, 00);"+
-                    "width:"+(graphController.graphSettings.controllerWidth)+"px;"+
-                    "height:"+(graphController.graphSettings.controllerHeight)+"px;"+
+                    "width:"+(graphController.settings.controllerWidth)+"px;"+
+                    "height:"+(graphController.settings.controllerHeight)+"px;"+
                     "justify-content: center;"+
                     "align-items: flex-top;"+
-                    "background-image: url("+graphController.graphSettings.controllerPicURL+");"+
+                    "background-image: url("+graphController.settings.controllerPicURL+");"+
                     "background-repeat: no-repeat;"+
                     "background-position: center;"+
                     "background-size: 100% 100%;"+
-                    "transform: rotate("+(graphController.getControllerCoordPx(graphController.graphSettings.indexController)[2])+"deg)"
+                    "transform: rotate("+(graphController.getControllerCoordPx(graphController.indexController)[2])+"deg)"
                 );
                 
-                graphController.graphSettings.indexController++
+                graphController.indexController++
             
             }
         }
@@ -178,16 +167,16 @@ var graphController = {
     addHeadPoint : function(){
         
         // Add point as a head
-        utils.addElement("div",graphController.graphSettings.graphControllerDiv,
+        utils.addElement("div",graphController.element.graphControllerDiv,
             [
-                "left:"+((graphController.graphSettings.width/2)-((0.2*graphController.graphSettings.width)/((graphController.graphSettings.valueMax/graphController.graphSettings.zoom)*2))/2)+"px;"+
-                "top:"+((graphController.graphSettings.height/2)-((0.2*graphController.graphSettings.width)/((graphController.graphSettings.valueMax/graphController.graphSettings.zoom)*2))/2)+"px;"+
+                "left:"+((graphController.settings.width/2)-((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px;"+
+                "top:"+((graphController.settings.height/2)-((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px;"+
                 "display: flex;"+
                 "position:absolute;"+
                 "background: rgb(50, 50, 50, 1);"+
-                "width:"+((0.2*graphController.graphSettings.width)/((graphController.graphSettings.valueMax/graphController.graphSettings.zoom)*2))+"px;"+
-                "height:"+((0.2*graphController.graphSettings.width)/((graphController.graphSettings.valueMax/graphController.graphSettings.zoom)*2))+"px;"+
-                "border-radius:"+(((0.2*graphController.graphSettings.width)/((graphController.graphSettings.valueMax/graphController.graphSettings.zoom)*2))/2)+"px"
+                "width:"+((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))+"px;"+
+                "height:"+((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))+"px;"+
+                "border-radius:"+(((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px"
             ]
         );
     },
@@ -195,7 +184,7 @@ var graphController = {
     addAxis : function(){
       
         newAxis = function(id,x1,x2,y1,y2){
-            graphController.graphSettings.graphControllerSvg.append("line")
+            graphController.element.graphControllerSvg.append("line")
                 .attr("id", id)
                 .attr("class", "axis")
                 .attr("x1", x1)   
@@ -209,31 +198,31 @@ var graphController = {
         };
     
         // Add x axis
-        newAxis("abscisseAxis",0,graphController.graphSettings.width,(graphController.graphSettings.height/2),(graphController.graphSettings.height/2));
+        newAxis("abscisseAxis",0,graphController.settings.width,(graphController.settings.height/2),(graphController.settings.height/2));
         
         // Add y axis
-        newAxis("ordinateAxis",(graphController.graphSettings.width/2),(graphController.graphSettings.width/2),(0),(graphController.graphSettings.height));
+        newAxis("ordinateAxis",(graphController.settings.width/2),(graphController.settings.width/2),(0),(graphController.settings.height));
 
         
         
         // Add vertical axis
-        newAxis("RightAxis",(graphController.graphSettings.xScale(1)),(graphController.graphSettings.xScale(1)),(0),(graphController.graphSettings.height));
+        newAxis("RightAxis",(graphController.scale.xScale(1)),(graphController.scale.xScale(1)),(0),(graphController.settings.height));
         
-        newAxis("LeftAxis",(graphController.graphSettings.xScale(-1)),(graphController.graphSettings.xScale(-1)),(0),(graphController.graphSettings.height));
+        newAxis("LeftAxis",(graphController.scale.xScale(-1)),(graphController.scale.xScale(-1)),(0),(graphController.settings.height));
 
         
         
         // Add horizontal axis
-        newAxis("topAxis",(0),(graphController.graphSettings.width),graphController.graphSettings.yScale(1),(graphController.graphSettings.yScale(1)));
+        newAxis("topAxis",(0),(graphController.settings.width),graphController.scale.yScale(1),(graphController.scale.yScale(1)));
         
-        newAxis("bottomAxis",(0),(graphController.graphSettings.width),(graphController.graphSettings.yScale(-1)),(graphController.graphSettings.yScale(-1)));
+        newAxis("bottomAxis",(0),(graphController.settings.width),(graphController.scale.yScale(-1)),(graphController.scale.yScale(-1)));
 
         
     },
     
     addGraphBorder : function(){
         newGraphBorder = function(id,x1,x2,y1,y2){
-              graphController.graphSettings.graphControllerSvg.append("line")
+              graphController.element.graphControllerSvg.append("line")
                   .attr("id", id)
                   .attr("class", "axis")
                   .attr("x1", x1)   
@@ -245,12 +234,12 @@ var graphController = {
                   .style("fill", "none");
           };
           
-          newGraphBorder("bottomBorder",0,graphController.graphSettings.width,(graphController.graphSettings.height-2),(graphController.graphSettings.height-2));
-          newGraphBorder("topBorder",0,graphController.graphSettings.width,(0+2),(0+2));
+          newGraphBorder("bottomBorder",0,graphController.settings.width,(graphController.settings.height-2),(graphController.settings.height-2));
+          newGraphBorder("topBorder",0,graphController.settings.width,(0+2),(0+2));
           
           
-          newGraphBorder("leftBorder",(0+2),(0+2),(0),(graphController.graphSettings.height));
+          newGraphBorder("leftBorder",(0+2),(0+2),(0),(graphController.settings.height));
           
-          newGraphBorder("rightBorder",(graphController.graphSettings.width-2),(graphController.graphSettings.width-2),(0),(graphController.graphSettings.height));
+          newGraphBorder("rightBorder",(graphController.settings.width-2),(graphController.settings.width-2),(0),(graphController.settings.height));
     },
 }

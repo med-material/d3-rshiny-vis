@@ -2,9 +2,9 @@
 /*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-02-2022                             */
+/*      dec-07-2022                             */
 /*      slider.js                               */
-/*      v1_1_0                                  */
+/*      v1_1_1                                  */
 //////////////////////////////////////////////////
 
 //Contains all the functions necessary for slider display.
@@ -13,35 +13,37 @@
 var slider = {
 
     sliderSettings : {
-        sliderDiv : {},
-        sliderAxisSvg : {},
+        height : 0,//px
+        width : 0,//px
         
-        height : 60,//px
-        width : 450,//px
+        marginTop : 0,//px
+        marginLeft : 0,//px
         
-        marginTop : 720,//px
-        marginLeft : 175,//px
-        
-        
-        sliderValue : 0,
-        
-        dateScale : {},
-        
-        objStartButton : {},
-        sBtnHeight : 50,//px
-        sBtnWidth : 100,//px
-        sBtnMargingTop : 5,//px
+        sBtnHeight : 0,//px
+        sBtnWidth : 0,//px
+        sBtnMargingTop : 0,//px
         sBtnMargingLeft : 0,
         
-        objSlider : {},
-        sliderHeight : 50,//px
-        sliderWidth : 330,
-        sliderMargingTop : 5,//px
-        sliderMargingLeft : 10,//px
-        
-        n : 0,
-    
+        sliderHeight : 0,//px
+        sliderWidth : 0,
+        sliderMargingTop : 0,//px
+        sliderMargingLeft : 0,//px
     },
+    
+    scale : {
+        dateScale : {},
+    },
+    
+    element : {
+        sliderDiv : {},
+        sliderAxisSvg : {},
+        objStartButton : {},
+        objSlider : {},
+    },
+
+    maxValue : 0,
+    
+    
     
     test : function(){
         return 1;
@@ -49,33 +51,21 @@ var slider = {
     
     updateLocalVariables : function(newSettings){
       
-        slider.sliderSettings.height = newSettings.height;
-        slider.sliderSettings.width = newSettings.width;
+        slider.sliderSettings = newSettings;
         
-        slider.sliderSettings.marginTop = newSettings.marginTop;
-        slider.sliderSettings.marginLeft = newSettings.marginLeft;
         
-        slider.sliderSettings.sBtnHeight = newSettings.sBtnHeight;
-        slider.sliderSettings.sBtnWidth = newSettings.sBtnWidth;
-        slider.sliderSettings.sBtnMargingTop = newSettings.sBtnMargingTop;
-        slider.sliderSettings.sBtnMargingLeft = newSettings.sBtnMargingLeft;
+        slider.maxValue = (ChartOptions.dateMax-ChartOptions.dateMin)/14;
         
-        slider.sliderSettings.sliderHeight = newSettings.sliderHeight;
-        slider.sliderSettings.sliderWidth = newSettings.sliderWidth;
-        slider.sliderSettings.sliderMargingTop = newSettings.sliderMargingTop;
-        slider.sliderSettings.sliderMargingLeft = newSettings.sliderMargingLeft;
         
-        slider.sliderSettings.n = (ChartOptions.DataArrays.dateMax-ChartOptions.DataArrays.dateMin)/14;
-        
-        slider.sliderSettings.dateScale = d3.scaleTime()
-            .domain([new Date(0),new Date(ChartOptions.DataArrays.dateMax.getTime() - ChartOptions.DataArrays.dateMin.getTime())])
+        slider.scale.dateScale = d3.scaleTime()
+            .domain([new Date(0),new Date(ChartOptions.dateMax.getTime() - ChartOptions.dateMin.getTime())])
             .range([0, slider.sliderSettings.sliderWidth]);
       
     },
     
     createSection : function(back){
         // Add a DIV for the slider
-        slider.sliderSettings.sliderDiv = utils.addElement("div",back,
+        slider.element.sliderDiv = utils.addElement("div",back,
             [
                 "display: flex;"+
                 "position:absolute;"+
@@ -90,7 +80,7 @@ var slider = {
         ).attr('id', "divSlider");
         
         // Add a SVG for the slider axis
-        slider.sliderSettings.sliderAxisSvg = utils.addElement("svg",slider.sliderSettings.sliderDiv,
+        slider.element.sliderAxisSvg = utils.addElement("svg",slider.element.sliderDiv,
             [
                 "display: flex;"+
                 "position:absolute;"+
@@ -108,11 +98,11 @@ var slider = {
     addSlider : function(){
     
           // Add a scrollbar
-          slider.sliderSettings.sliderDiv
+          slider.element.sliderDiv
               .append('input')
               .attr('type', "range")
               .attr('min', "0")
-              .attr('max', slider.sliderSettings.n)
+              .attr('max', slider.maxValue)
               .attr('id', "slider")
               .attr('name', "slider")
               .attr('onmousemove', "sliderChange()")
@@ -124,20 +114,20 @@ var slider = {
               );
           
           // Save button element on a variable
-          slider.sliderSettings.objStartButton = document.getElementById('startButton');
+          slider.element.objStartButton = document.getElementById('startButton');
           slider.changeStartButtonValues();
           
           // Save  scrollbar on a variable
-          slider.sliderSettings.objSlider = document.getElementById('slider');
+          slider.element.objSlider = document.getElementById('slider');
           
           // Add scale's legend
-          slider.sliderSettings.sliderAxisSvg.append('g')
-              .call(d3.axisBottom(slider.sliderSettings.dateScale).tickFormat(d3.timeFormat("%s")).ticks(d3.timeSecond .every(15)));
+          slider.element.sliderAxisSvg.append('g')
+              .call(d3.axisBottom(slider.scale.dateScale).tickFormat(d3.timeFormat("%s")).ticks(d3.timeSecond .every(15)));
       },
       
       addButton : function(){
           // Add a button start/stop
-          slider.sliderSettings.sliderDiv
+          slider.element.sliderDiv
               .append('button')
               .attr('id', "startButton")
               .attr('name', "startButton")
@@ -154,9 +144,9 @@ var slider = {
       
       changeStartButtonValues : function(){
           if(ChartOptions.mouvementSettings.isStart){
-              slider.sliderSettings.objStartButton.textContent = 'Stop';
+              slider.element.objStartButton.textContent = 'Stop';
           }else{
-              slider.sliderSettings.objStartButton.textContent = 'Start';
+              slider.element.objStartButton.textContent = 'Start';
           };
       },
 }
