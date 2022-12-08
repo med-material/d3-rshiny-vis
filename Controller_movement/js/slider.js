@@ -1,18 +1,16 @@
 //////////////////////////////////////////////////
-/*                                              */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
 /*      dec-07-2022                             */
 /*      slider.js                               */
 /*      v1_1_1                                  */
 //////////////////////////////////////////////////
-
 //Contains all the functions necessary for slider display.
 
 
 var slider = {
 
-    sliderSettings : {
+    settings : {
         height : 0,//px
         width : 0,//px
         
@@ -51,7 +49,7 @@ var slider = {
     
     updateLocalVariables : function(newSettings){
       
-        slider.sliderSettings = newSettings;
+        slider.settings = newSettings;
         
         
         slider.maxValue = (ChartOptions.dateMax-ChartOptions.dateMin)/14;
@@ -59,7 +57,7 @@ var slider = {
         
         slider.scale.dateScale = d3.scaleTime()
             .domain([new Date(0),new Date(ChartOptions.dateMax.getTime() - ChartOptions.dateMin.getTime())])
-            .range([0, slider.sliderSettings.sliderWidth]);
+            .range([0, slider.settings.sliderWidth]);
       
     },
     
@@ -70,10 +68,10 @@ var slider = {
                 "display: flex;"+
                 "position:absolute;"+
                 "background: rgb(50, 50, 50, 0);"+
-                "width:"+slider.sliderSettings.width+"px;"+
-                "height:"+(slider.sliderSettings.height)+"px;"+
-                "margin-top:"+slider.sliderSettings.marginTop+"px;"+
-                "margin-left:"+(slider.sliderSettings.marginLeft)+"px;"+
+                "width:"+slider.settings.width+"px;"+
+                "height:"+(slider.settings.height)+"px;"+
+                "margin-top:"+slider.settings.marginTop+"px;"+
+                "margin-left:"+(slider.settings.marginLeft)+"px;"+
                 "justify-content: center;"+
                 "align-items: flex-top"
             ]
@@ -88,7 +86,7 @@ var slider = {
                 "width:"+500+"px;"+
                 "height:"+(50)+"px;"+
                 "margin-top:"+40+"px;"+
-                "margin-left:"+(slider.sliderSettings.sBtnWidth+40)+"px;"+
+                "margin-left:"+(slider.settings.sBtnWidth+40)+"px;"+
                 "justify-content: center;"+
                 "align-items: flex-top"
             ]
@@ -107,10 +105,10 @@ var slider = {
               .attr('name', "slider")
               .attr('onmousemove', "sliderChange()")
               .attr('style', 
-                  "width:"+slider.sliderSettings.sliderWidth+"px;"+
-                  "height:"+slider.sliderSettings.sliderHeight+"px;"+
-                  "margin-top:"+slider.sliderSettings.sliderMargingTop+"px;"+
-                  "margin-left:"+slider.sliderSettings.sliderMargingLeft+"px"
+                  "width:"+slider.settings.sliderWidth+"px;"+
+                  "height:"+slider.settings.sliderHeight+"px;"+
+                  "margin-top:"+slider.settings.sliderMargingTop+"px;"+
+                  "margin-left:"+slider.settings.sliderMargingLeft+"px"
               );
           
           // Save button element on a variable
@@ -135,10 +133,10 @@ var slider = {
               .attr('onclick', "startButtonOnclick()")
               .attr('style', "position:absolute")
               .attr('style', 
-                  "width:"+slider.sliderSettings.sBtnWidth+"px;"+
-                  "height:"+slider.sliderSettings.sBtnHeight+"px;"+
-                  "margin-top:"+slider.sliderSettings.sBtnMargingTop+"px;"+
-                  "margin-left:"+slider.sliderSettings.sBtnMargingLeft+"px"
+                  "width:"+slider.settings.sBtnWidth+"px;"+
+                  "height:"+slider.settings.sBtnHeight+"px;"+
+                  "margin-top:"+slider.settings.sBtnMargingTop+"px;"+
+                  "margin-left:"+slider.settings.sBtnMargingLeft+"px"
           );
       },
       
