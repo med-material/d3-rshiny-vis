@@ -59,13 +59,6 @@ var ChartOptions = {
         sliderMargingLeft : 10,//px
     },
     
-    DataArrays : {
-        dateMin : {}, // first date into CSV files
-        dateMax : {}, // last date into CSV files
-        
-        indexDate : {}, //curent date
-    },
-    
     mouvementSettings : {
         isStart : false,
         index : 0,
