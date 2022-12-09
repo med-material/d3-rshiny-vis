@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-08-2022                             */
+/*      dec-09-2022                             */
 /*      wall.js                                 */
-/*      v2_2_0                                  */
+/*      v2_2_1                                  */
 //////////////////////////////////////////////////
 //Contains all the functions necessary for the operation of the wall display.
 
@@ -22,6 +22,9 @@ var wall = {
         
         laserSize : 0,//px
         laserColor : "", // Default color of the laser
+        
+        borderSize : 0,//px
+        borderColor : "",
         
         viewportBoundariesBorderSize : 0,//px
         viewportBoundariesBorderColor : "",
@@ -130,6 +133,29 @@ var wall = {
             };
           };
         };
+    },
+    
+    addWallBorder : function(){
+          newWallBorder = function(id,x1,x2,y1,y2){
+              wall.element.wallSection.append("line")
+                  .attr("id", id)
+                  .attr("class", "axis")
+                  .attr("x1", x1)   
+                  .attr("y1", y1 )     
+                  .attr("x2", x2)    
+                  .attr("y2", y2 )
+                  .style("stroke", wall.settings.borderColor)
+                  .style('stroke-width', wall.settings.borderSize+'px')
+                  .style("fill", "none");
+          };
+          
+          newWallBorder("bottomWallBorder",0,wall.settings.width,(wall.settings.height-(wall.settings.borderSize/2)),(wall.settings.height-(wall.settings.borderSize/2)));
+          newWallBorder("topWallBorder",0,wall.settings.width,(0+(wall.settings.borderSize/2)),(0+(wall.settings.borderSize/2)));
+          
+          
+          newWallBorder("leftWallBorder",(0+(wall.settings.borderSize/2)),(0+(wall.settings.borderSize/2)),(0),(wall.settings.height));
+          
+          newWallBorder("rightWallBorder",(wall.settings.width-(wall.settings.borderSize/2)),(wall.settings.width-(wall.settings.borderSize/2)),(0),(wall.settings.height));
     },
     
     changeMolesState : function(){

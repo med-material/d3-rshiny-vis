@@ -1,10 +1,10 @@
 #//////////////////////////////////////////////////
 #/*      CREATE Aalborg University               */
 #/*      aldsanms                                */
-#/*      dec-08-2022                             */
+#/*      dec-09-2022                             */
 #/*      app.R                                   */
 #/*      Viewport_boundaries                     */
-#/*      v_1_0_0                                 */
+#/*      v_1_0_1                                 */
 #//////////////////////////////////////////////////
 
 
@@ -14,7 +14,7 @@ library(tidyverse)
 library(sp)
 source("utils/loadrawdata.R")
 options("digits.secs"=6)
-
+options(r2d3.shadow = FALSE)
 
 #loading data
 AllData <- LoadFromDirectory("data")
@@ -71,7 +71,7 @@ server <- function(input, output) {
     r2d3(
       data= data_to_json(data),
       script = "js/main.js",
-      dependencies = list("js/wall.js", #v2_2_0
+      dependencies = list("js/wall.js", #v2_2_1
                           "js/utils.js", #v_1_0_1
                           "js/slider.js" #v_1_1_1
                           )

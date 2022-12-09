@@ -2,9 +2,9 @@
 /*      Graph D3.js ViewportBoundaries          */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      dec-08-2022                             */
+/*      dec-09-2022                             */
 /*      main.js                                 */
-/*      v_1_0_0                                 */
+/*      v_1_0_1                                 */
 //////////////////////////////////////////////////
 
 //
@@ -19,7 +19,7 @@ var ChartOptions = {
     windowSettings : {
         windowSection : {},
       
-        height : 800,//px // height of the window
+        height : 600,//px // height of the window
         width : 800,//px // width of the window
     },
     
@@ -36,6 +36,9 @@ var ChartOptions = {
         laserSize : 10,//px
         laserColor : "red", // default color of the laser
         
+        borderSize : 2,//px
+        borderColor : "grey",
+        
         viewportBoundariesBorderSize : 5,//px
         viewportBoundariesBorderColor : "grey",
         viewportBoundariesBackColor : "#00000000",
@@ -45,7 +48,7 @@ var ChartOptions = {
         height : 60,//px
         width : 450,//px
         
-        marginTop : 720,//px
+        marginTop : 500,//px
         marginLeft : 175,//px
         
         sBtnHeight : 50,//px
@@ -92,18 +95,20 @@ start();
 // Initialize the local variables of each class
 function initialization(){
   
-    // Delete content created by R2D3 to do it myself
-    document.getElementById("pageGraph").remove();
-  
+    // Delete svg created by R2D3
+    document.getElementById("pageGraph").getElementsByTagName("svg")[0].remove();
+    
+
     // Create a DIV as a background
-    ChartOptions.windowSettings.windowSection = utils.addElement("div",d3.select("body"),
+    ChartOptions.windowSettings.windowSection = utils.addElement("div",d3.select("#pageGraph"),
               [
                 "width:"+ChartOptions.windowSettings.width+"px;"+
                 "height:"+ChartOptions.windowSettings.height+"px;"+
                 "position: relative"
               ]
             );
-            
+    
+    
     // Get date min and max
     ChartOptions.dateMin = new Date(data.ad[0]['Timestamp']);
     ChartOptions.dateMax = new Date(data.ad[data.ad.length-2]['Timestamp']);
@@ -126,6 +131,8 @@ function start(){
     
     // Create the wall section
     wall.createSection(ChartOptions.windowSettings.windowSection);
+    
+    wall.addWallBorder();
     
     // Add moles to the wall      
     wall.addMolesToWall();
