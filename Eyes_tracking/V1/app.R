@@ -14,6 +14,8 @@ server <- function(input, output) {
     
     Maindata = data %>%filter(LocalGazeDirectionX != 'NULL')
     
+    Maindata = Maindata %>% mutate(Timestamp = as.POSIXct(Timestamp, format = "%Y-%m-%d %H:%M:%OS"))
+    
     Eyes_Data = Maindata %>% select(LocalGazeDirectionX,LocalGazeDirectionY)
     
     Xtrem_points <- chull(Eyes_Data$LocalGazeDirectionX, Eyes_Data$LocalGazeDirectionY)
