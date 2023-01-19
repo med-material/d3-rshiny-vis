@@ -146,8 +146,7 @@ function initialization(){
                 "position: relative"
               ]
             );
-    
-    
+  
     // Get date min and max
     chartOptions.dateMin = new Date(data.aed[0]['Timestamp']);
     chartOptions.dateMax = new Date(data.aed[data.aed.length-2]['Timestamp']);

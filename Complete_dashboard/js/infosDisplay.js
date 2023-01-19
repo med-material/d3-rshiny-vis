@@ -18,23 +18,23 @@ var infosDisplay = {
         marginLeft : 0,//px
     },
 
-    element : {
+    // Definition of all the sections necessary for the display
+    element : { 
         infosDisplayDiv : {},
         infosDisplayListDiv : {},
         infosDisplayGameStatsSVG : {},
         infosDisplayCoordinateSVG : {},
+        
         infosMotorSpaceLSVG : {},
         infosMotorSpaceRSVG : {},
         
+        objControllerLeft : {},
         objControllerRight : {},
     },
     
     scale : {
-        MotorSpaceLyScale : {},
-        MotorSpaceRxScale : {},
-        
-        MotorSpaceRyScale : {},
-        MotorSpaceLxScale : {},
+        MotorSpaceXScale : {},
+        MotorSpaceYScale : {},
     },
 
     indexScrollingList : 0,
@@ -48,11 +48,12 @@ var infosDisplay = {
       
         infosDisplay.settings = newSettings;
         
-        infosDisplay.scale.MotorSpaceRyScale = d3.scaleLinear()
+        // Declaration of the graph domains
+        infosDisplay.scale.MotorSpaceYScale = d3.scaleLinear()
                       .domain([(-(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainY"])/2.5, ((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainY"])/2.5])
                       .range([(0), (240)]);
                   		
-        infosDisplay.scale.MotorSpaceRxScale = d3.scaleLinear()
+        infosDisplay.scale.MotorSpaceXScale = d3.scaleLinear()
             .domain([(-(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainX"])/2.5, ((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainX"])/2.5]) 
             .range([(0), (180)]);
     },
@@ -69,7 +70,7 @@ var infosDisplay = {
               ]
         );
         
-        
+        // Creating a section for the drop-down list
         infosDisplay.element.infosDisplayListDiv = utils.addElement("ul",infosDisplay.element.infosDisplayDiv,
               [
                 "width:" +infosDisplay.settings.width+"px;"+
@@ -87,7 +88,7 @@ var infosDisplay = {
               ]
         ).attr("id","eventList");
         
-        
+        // Create a section for statistics
         infosDisplay.element.infosDisplayGameStatsSVG = utils.addElement("svg",infosDisplay.element.infosDisplayDiv,
               [
                 "width:" +infosDisplay.settings.width+"px;"+
@@ -97,7 +98,7 @@ var infosDisplay = {
               ]
         );
         
-        
+        // Create a section to display the position of elements in graph
         infosDisplay.element.infosDisplayCoordinateSVG = utils.addElement("svg",back,
               [
                 "width:" +800+"px;"+
@@ -106,6 +107,7 @@ var infosDisplay = {
               ]
         );
         
+        // Create a section to display the left Motor Space
         infosDisplay.element.infosMotorSpaceLSVG = utils.addElement("svg",back,
               [
                 "width:" +240+"px;"+
@@ -116,6 +118,7 @@ var infosDisplay = {
               ]
         );
         
+        // Add frame around motor space graph
         utils.addElement("rect",infosDisplay.element.infosMotorSpaceLSVG,
               [
                 "x:"+3+";"+
@@ -131,7 +134,7 @@ var infosDisplay = {
         );
         
         
-        
+        // Create a section to display the right Motor Space
         infosDisplay.element.infosMotorSpaceRSVG = utils.addElement("svg",back,
               [
                 "width:" +(240)+"px;"+
@@ -142,6 +145,7 @@ var infosDisplay = {
               ]
         );
         
+        // Add frame around motor space graph
         utils.addElement("rect",infosDisplay.element.infosMotorSpaceRSVG,
               [
                 "x:"+(3)+";"+
@@ -345,7 +349,7 @@ var infosDisplay = {
         gameStatsSection = infosDisplay.element.infosDisplayCoordinateSVG.append("g");
         
         gameStatsSection.append('image')
-          .attr('xlink:href', 'img/controller01.png')
+          .attr('xlink:href', graphController.settings.rightControllerPicURL)
           .attr('width', 40)
           .attr('height', 40)
           .attr("x", (graphController.settings.marginLeft + graphController.settings.width*2 -40 -5))
@@ -410,7 +414,7 @@ var infosDisplay = {
         gameStatsSection = infosDisplay.element.infosDisplayCoordinateSVG.append("g");
         
         gameStatsSection.append('image')
-          .attr('xlink:href', 'img/controller01.png')
+          .attr('xlink:href', graphController.settings.leftControllerPicURL)
           .attr('width', 40)
           .attr('height', 40)
           .attr("x", (graphController.settings.marginLeft + graphController.settings.width +30 -20))
@@ -477,13 +481,13 @@ var infosDisplay = {
 
         return coord = {
           right : {
-            x : infosDisplay.scale.MotorSpaceRxScale((data.ad[i]['RightControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
-            y : infosDisplay.scale.MotorSpaceRyScale((data.ad[i]['RightControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
+            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['RightControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
+            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['RightControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
             z : 0,
           },
           left : {
-            x : infosDisplay.scale.MotorSpaceRxScale((data.ad[i]['LeftControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
-            y : infosDisplay.scale.MotorSpaceRyScale((data.ad[i]['LeftControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
+            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['LeftControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
+            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['LeftControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
             z : 0,
           }
         };
@@ -533,15 +537,13 @@ var infosDisplay = {
                     .duration(14)
                     .attr('x', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).left.x; })
                     .attr('y', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).left.y; })
-                
-                
-              
+
     },
     
     changeMotorSpaceInfo : function(){
       
           if(new Date(chartOptions.indexDate) >= new Date(data.ad[infosDisplay.indexMotorSpace]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >=new Date(data.ad[infosDisplay.indexMotorSpace]['Timestamp'])){
+            while(new Date(chartOptions.indexDate) >= new Date(data.ad[infosDisplay.indexMotorSpace]['Timestamp'])){
               
                   var thisMole = {};
                   
@@ -567,36 +569,46 @@ var infosDisplay = {
     updated : function(){
       
         // change text values
+        
+        // Displays the number of spawned moles
         d3.select("#infosDisplayMoleSpawnedText")
         .text(wall.molesEventCount.moleSpawnCount+" / "+data.ms[0]["moleSpawned"]+ " mole spawned");
         
+        // Displays the number of hit moles 
         d3.select("#infosDisplayMoleHitText")
         .text(wall.molesEventCount.moleHitCount+" mole hit, "+(wall.molesEventCount.moleSpawnCount - wall.molesEventCount.moleHitCount)+" missed");
         
+        // Displays the number of moles hit
         d3.select("#infosDisplayFakeMoleSpawnedText")
         .text(wall.molesEventCount.fakeMoleSpawnCount+" / "+data.ms[0]["fakeMoleSpawned"]+ " distractors spawned");
         
+        // Displays the number of fake moles hit
         d3.select("#infosDisplayFakeMoleHitText")
         .text(wall.molesEventCount.fakeMoleHitCount+" distractor hit");
         
+        // Displays the reaction time value
         d3.select("#infosDisplayReactionTimeText")
         .text((Math.round((wall.reactionTime.currentReactionTime/1000) * 10) / 10) +" Seconds");
         
         
         if(chartOptions.mouvementSettings.rightController){
+          
+            // Displays the controller position
             d3.select("#rightControllerInfosText")
             .text("x " + (graphController.controllersPosition.right.x).toFixed(2) +  "  y " + (graphController.controllersPosition.right.y).toFixed(2)+  "  z " + (graphController.controllersPosition.right.z).toFixed(2));
             
-            
+            // Displays the laser position
             d3.select("#rightLaserInfosText")
             .text("x " +(wall.lasersPosition.right.x*1.0).toFixed(2) + " y "+( wall.lasersPosition.right.y*1.0).toFixed(2)+ " z "+ (wall.lasersPosition.right.z*1.0).toFixed(2));
         }
         
         if(chartOptions.mouvementSettings.leftController){
+          
+            // Displays the controller position
             d3.select("#leftControllerInfosText")
             .text("x " + (graphController.controllersPosition.left.x).toFixed(2) +  "  y " + (graphController.controllersPosition.left.y).toFixed(2)+  "  z " + (graphController.controllersPosition.left.z).toFixed(2));
             
-            
+            // Displays the laser position
             d3.select("#leftLaserInfosText")
             .text("x " +(wall.lasersPosition.left.x*1.0).toFixed(2) + " y "+(wall.lasersPosition.left.y*1.0).toFixed(2)+ " z "+ (wall.lasersPosition.left.z*1.0).toFixed(2));
         }
