@@ -85,10 +85,10 @@ function ToAnotherList(points) {
     Global_Variables.pointsOnlyY.push(points[0][1])
   }
   
-function Init(){
+function PrepareGraph(){
       svg.attr('width',900)
     .attr('height',900)
-    .attr('style', "background: rgb(255, 255, 255);background-image: url(img/back02.png);background-repeat: no-repeat;background-position: 50% 40%    ;background-size: 140%;");
+    .attr('style', "background: rgb(255, 255, 255);background-image: url(img/back01.svg);background-repeat: no-repeat;background-position: 50% 40%    ;background-size: 100%;");
 
     			
     var Graph = svg.append("g")
@@ -113,9 +113,9 @@ function Init(){
       return Graph;
 }  
   
-function Main(){
+function DrawGraph(){
   
-  Graph = Init();
+  Graph = PrepareGraph();
   
    data.hull_list.forEach((element,i) => {              //The forEach parse a very low amount of data as it search through only hull points
     Xcoord = parseFloat(data.MainData[data.hull_list[i]-1].LocalGazeDirectionX)*1.02      
@@ -133,14 +133,14 @@ function Main(){
   .style("fill","rgb(255, 102, 102)");
   })
   
-  var line= d3.line()
+  var EyesPath= d3.line()
       .x((d,i) => getCoordEyesDir(i)[0])
       .y((d,i) => getCoordEyesDir(i)[1])
   
       
   Graph.append("path")
     .datum(data.MainData)
-    .attr("d", line)
+    .attr("d", EyesPath)
     .style("fill", "none")
     .style("stroke", "rgb(153, 153, 153)")
     .style("stroke-width", "1");
@@ -157,18 +157,18 @@ function Main(){
 
       ToAnotherList(Global_Variables.pointsArray);
       
-    var line2= d3.line()
+    var boundaryline= d3.line()
       .x((d,i) => getCoordlimit(i)[0])
       .y((d,i) => getCoordlimit(i)[1])
       
       
   Graph.append("path")
     .datum(data.MainData)
-    .attr("d", line2)
+    .attr("d", boundaryline)
     .style("fill", "none")
     .style("stroke", "rgb(0, 89, 179)")
     .style("stroke-width", "3");      
    
 }
   
-Main()
+DrawGraph()
