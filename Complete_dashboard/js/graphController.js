@@ -71,7 +71,7 @@ var graphController = {
       directionLooked : false,
     },
     
-    indexController : 0,
+    //indexController : 0,
     
 
     
@@ -234,10 +234,10 @@ var graphController = {
     changeControllerLocation : function(){
       
         // If the target date is less than the date in the index of events
-        if(new Date(chartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >=new Date(data.ad[graphController.indexController]['Timestamp'])){
+        //if(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >=new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
               
-                var coords = graphController.getControllerCoordPx(graphController.indexController);
+                var coords = graphController.getControllerCoordPx(chartOptions.indexAd);
 
                 
                 if(chartOptions.mouvementSettings.rightController)graphController.element.objRightController.transition()
@@ -276,10 +276,10 @@ var graphController = {
                     "transform: rotate("+(coords.left.rotX)+"deg)"
                 );
                 
-                graphController.indexController++
+                //chartOptions.indexAd++
             
-            }
-        }
+            //}
+        //}
     },
     
     addHeadPoint : function(){
@@ -388,9 +388,12 @@ var graphController = {
     addNearControllerPath : function(){
       
        data.ad.forEach((element,index) => {
-            
-                utils.addPointOnSvg(graphController.element.graphControllerSvg,graphController.settings.pointSize,graphController.getControllerCoordPx(index).right.x,graphController.getControllerCoordPx(index).right.z,"#00000000").attr("id",("graphControllerNearControllerPath"+index))
-            
+            if(chartOptions.mouvementSettings.rightController){
+                utils.addPointOnSvg(graphController.element.graphControllerSvg,graphController.settings.pointSize,graphController.getControllerCoordPx(index).right.x,graphController.getControllerCoordPx(index).right.z,"#00000000").attr("id",("graphControllerNearControllerPathRight"+index))
+            }
+            if(chartOptions.mouvementSettings.leftController){
+                utils.addPointOnSvg(graphController.element.graphControllerSvg,graphController.settings.pointSize,graphController.getControllerCoordPx(index).left.x,graphController.getControllerCoordPx(index).left.z,"#00000000").attr("id",("graphControllerNearControllerPathLeft"+index))
+            }
         });
           
         graphController.displaySettings.nearControllerPath = true;
@@ -413,17 +416,24 @@ var graphController = {
             "background-repeat: no-repeat;"+
             "background-position: center;"+
             "background-size: 100% 100%;"+
-            "transform: rotate("+data.ad[graphController.indexController]['HeadCameraRotEulerY']+"deg)"
+            "transform: rotate("+data.ad[chartOptions.indexAd]['HeadCameraRotEulerY']+"deg)"
         );
     },
     
     changeNearControllerPath : function(){
       
-          var thisMole = d3.selectAll("#graphControllerNearControllerPath"+graphController.indexController);
+        if(chartOptions.mouvementSettings.rightController){
+          var thisMole = d3.selectAll("#graphControllerNearControllerPathRight"+chartOptions.indexAd);
           
           utils.changeFillElement(thisMole,graphController.settings.pathColor,0);
           utils.changeFillElement(thisMole, "#00000000",graphController.settings.pathTime);
-
+        } 
+        if(chartOptions.mouvementSettings.leftController){  
+          var thisMole = d3.selectAll("#graphControllerNearControllerPathLeft"+chartOptions.indexAd);
+          
+          utils.changeFillElement(thisMole,graphController.settings.pathColor,0);
+          utils.changeFillElement(thisMole, "#00000000",graphController.settings.pathTime);
+        }
     },
     
     updated : function(){
@@ -432,11 +442,5 @@ var graphController = {
         if(graphController.displaySettings.directionLooked)graphController.changeDirectionLooked();
         if(graphController.displaySettings.nearControllerPath)graphController.changeNearControllerPath();
     },
-    
-    resetIndexes : function(){
-      
-      graphController.indexController = 0;
-    },
-    
 
 }

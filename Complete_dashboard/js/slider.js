@@ -52,8 +52,7 @@ var slider = {
         slider.settings = newSettings;
         
         
-        slider.maxValue = (chartOptions.dateMax-chartOptions.dateMin)/14;
-        
+        slider.maxValue = Math.round((data.ad.length)*((1000 / chartOptions.mouvementSettings.fps)));
         
         slider.scale.dateScale = d3.scaleTime()
             .domain([new Date(0),new Date(chartOptions.dateMax.getTime() - chartOptions.dateMin.getTime())])

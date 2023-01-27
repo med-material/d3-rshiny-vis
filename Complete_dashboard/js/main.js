@@ -2,9 +2,9 @@
 /*      Graph D3.js ImplementCompleteDashboard  */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-17-2023                             */
+/*      jan-25-2023                             */
 /*      main.js                                 */
-/*      v_1_0_1                                 */
+/*      v_1_2_0                                 */
 //////////////////////////////////////////////////
 
 //
@@ -103,13 +103,21 @@ var chartOptions = {
         rightController : false,
         isStart : false,
         index : 0,
+        fps :24,
     },
+    
+    mouseButton : 0,
     
     dateMin : {}, // first date into CSV files
     dateMax : {}, // last date into CSV files
     dateDif : {},
+    dateRecalibrated : {},
     
+    startProgTime : {},
     indexDate : {}, //curent date
+    
+    indexAed : 0,
+    indexAd : 0,
 };
 
 
@@ -148,11 +156,14 @@ function initialization(){
             );
   
     // Get date min and max
-    chartOptions.dateMin = new Date(data.aed[0]['Timestamp']);
-    chartOptions.dateMax = new Date(data.aed[data.aed.length-2]['Timestamp']);
+    chartOptions.dateMin = new Date(data.ad[0]['Timestamp']);
+    chartOptions.dateMax = new Date(data.ad[data.ad.length-2]['Timestamp']);
+    
+    chartOptions.startProgTime = new Date().getTime();
     
     // Initialize index date
     chartOptions.indexDate = chartOptions.dateMin;
+    chartOptions.dateRecalibrated = chartOptions.indexDate;
     
     // Update all variables
     wall.updateLocalVariables(chartOptions.wallSettings);
@@ -248,9 +259,41 @@ function start(){
 
 function clock(){
   
+         
     // If is start
-    if(chartOptions.mouvementSettings.isStart){
+    if(chartOptions.mouvementSettings.isStart && (Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps)) < (data.ad.length-2))){
       
+      if(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
+            while(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
+             
+              if(chartOptions.indexAed<(data.aed.length-2)){
+                chartOptions.indexAed++;
+                infosDisplay.changeScrollingList();
+                wall.changeMolesState();
+              }else{
+                resetAll();
+                break;
+              }
+              
+            }
+      }
+
+      
+      if(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+            while(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+              
+              if(chartOptions.indexAd<(data.ad.length-2)){
+                chartOptions.indexAd++;
+                
+              }else{
+                //console.log("reset")
+                resetAll();
+                break;
+                
+              }
+            }
+      }
+
 
         wall.updated();
         
@@ -260,39 +303,67 @@ function clock(){
         
 
         chartOptions.mouvementSettings.index ++;
-        
-        // Add 100  Msecond to the curent index date
-        chartOptions.indexDate = new Date(chartOptions.dateMin.getTime() + 14*chartOptions.mouvementSettings.index); 
-        
+         
+    
+        // Get new curent index date
+        chartOptions.indexDate = new Date(  new Date(chartOptions.dateRecalibrated).getTime() + new Date().getTime() - new Date(chartOptions.startProgTime).getTime());
+
         chartOptions.dateDif = new Date(chartOptions.indexDate-chartOptions.dateMin);
         
-        // save slider value
+        // change slider value
         slider.element.objSlider.value = chartOptions.mouvementSettings.index;
         
         d3.select("#sliderTimeText")
         .text(chartOptions.dateDif.getMinutes()+":"+chartOptions.dateDif.getSeconds()+"."+chartOptions.dateDif.getMilliseconds());
     };
     
-    // Call clock function in 14 ms
-    setTimeout(clock, 14);
+ 
+    setTimeout(clock, (1000 / chartOptions.mouvementSettings.fps));
 };
 
 
 
+function resetAll(){
+    // Reset all indexes
+    /*chartOptions.indexAd = 0;
+    chartOptions.indexAed = 0;
+    
+    // reset index date
+    chartOptions.indexDate = chartOptions.dateMin;
+    chartOptions.dateRecalibrated = chartOptions.indexDate;
+    
+    
+    chartOptions.mouvementSettings.index = 0;
+    
+    slider.element.objSlider.value = 0;
+    
+    startButtonOnclick();
+    
+    //Reset All
+    
+    wall.resetAll();
+    
+    infosDisplay.resetAll();*/
+
+};
+
+window.addEventListener('mousemove', (event) => {chartOptions.mouseButton = event.buttons});
 
 window.startButtonOnclick = function(){
+  chartOptions.startProgTime = new Date().getTime();
+  chartOptions.dateRecalibrated = chartOptions.indexDate;
     chartOptions.mouvementSettings.isStart = !chartOptions.mouvementSettings.isStart;
+    
+    //console.log(new Date(chartOptions.dateRecalibrated).getTime())
     slider.changeStartButtonValues();
 };
 
 
 
 window.sliderChange = function(){
-  
-    if(chartOptions.mouvementSettings.isStart){
     
-    }else{
-  
+    if(chartOptions.mouseButton == 1){
+      
       if(slider.element.objSlider.value != chartOptions.mouvementSettings.index){
         
           // Reset moles
@@ -300,39 +371,25 @@ window.sliderChange = function(){
     
           chartOptions.mouvementSettings.index = slider.element.objSlider.value;
           
-          // Add 14 ms to the index date
-          chartOptions.indexDate = new Date(chartOptions.dateMin.getTime()  + 14*chartOptions.mouvementSettings.index);
-          
-          // Reset all indexes
-          wall.resetIndexes();
-          graphController.resetIndexes();
-          infosDisplay.resetIndexes();
-          
-
-          if(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexViewportBoundaries]['Timestamp'])){
-              while(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexViewportBoundaries]['Timestamp'])){
-                  wall.indexViewportBoundaries++;
-              };
-          };
-      
-          // If the target date is less than the date in the laser's index of events
-          if(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
-              while(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
-                  wall.indexLaser++;
-              };
+          if(Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps)) <= data.ad.length){
+              chartOptions.indexDate = new Date(data.ad[Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps))]['Timestamp']);
+              chartOptions.dateRecalibrated = chartOptions.indexDate;
+              
+              // Reset all indexes
+              chartOptions.indexAd = 0;
+              chartOptions.indexAed = 0;
+    
+              if(chartOptions.mouvementSettings.isStart == false){
+                // To make a smooth transition        
+                chartOptions.mouvementSettings.isStart = true;
+                setTimeout(function(){chartOptions.mouvementSettings.isStart = false;},100);
+              }
+              
+          }else{
+            resetAll();
           };
           
-          // If the target date is less than the date in the controller's index of events
-          if(new Date(chartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
-              while(new Date(chartOptions.indexDate) >= new Date(data.ad[graphController.indexController]['Timestamp'])){
-                  graphController.indexController++;
-              };
-          };
-      
-
-          // To make a smooth transition        
-          chartOptions.mouvementSettings.isStart = true;
-          setTimeout(function(){chartOptions.mouvementSettings.isStart = false;},100);
+          
       
         };
     };

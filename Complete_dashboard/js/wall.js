@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-10-2022                             */
+/*      jan-26-2022                             */
 /*      wall.js                                 */
-/*      v2_2_3                                  */
+/*      v2_2_4                                  */
 //////////////////////////////////////////////////
 //Contains all the functions necessary for the operation of the wall display.
 
@@ -91,9 +91,9 @@ var wall = {
     yMin : -3, // Minimum y value for the graph
     yMax : 3, // Maximum y value for the graph
     
-    indexMole : 0, // Curent lines into moles CSV file
-    indexLaser : 0, // Curent lines into laser CSV file
-    indexViewportBoundaries : 0,
+    //indexMole : 0, // Curent lines into moles CSV file
+    //indexLaser : 0, // Curent lines into laser CSV file
+    //indexViewportBoundaries : 0,
         
        
     
@@ -202,21 +202,22 @@ var wall = {
     changeMolesState : function(){
     
         // If the target date is less than the date in the index of events
-        if(new Date(chartOptions.indexDate) >= new Date(data.aed[wall.indexMole]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >= new Date(data.aed[wall.indexMole]['Timestamp'])){
+        //if(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAd]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAd]['Timestamp'])){
 
                 // Retrieve the object associated with the mole
-                var thisMole = wall.arrays.objMoles[wall.arrays.idMoles.indexOf(parseInt(data.aed[wall.indexMole]['MoleId']))];
+                //console.log(chartOptions.indexAed)
+                var thisMole = wall.arrays.objMoles[wall.arrays.idMoles.indexOf(parseInt(data.aed[chartOptions.indexAed]['MoleId']))];
                 
                 // Event playback
-                switch(data.aed[wall.indexMole]['Event']){
+                switch(data.aed[chartOptions.indexAed]['Event']){
                     
                     case "Mole Spawned":
                         // Change the background color of the mole with a time transition
-                        wall.reactionTime.spawnTime = new Date(data.aed[wall.indexMole]['Timestamp']);
+                        wall.reactionTime.spawnTime = new Date(data.aed[chartOptions.indexAed]['Timestamp']);
                         
                         utils.changeFillElement(thisMole,"green",1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.moleSpawnCount++;
 
                         
@@ -224,51 +225,51 @@ var wall = {
                     
                     case "Fake Mole Spawned":
                         utils.changeFillElement(thisMole,"#FFFB00",1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.fakeMoleSpawnCount++;
 
                         break;
                     
                     case "Mole Expired":
                         utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.moleExpired++;
                         break;
                     
                     case "Fake Mole Expired":
                         utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.fakeMoleExpired++;
                         break;
                     
                     case "Mole Hit":
-                        wall.reactionTime.currentReactionTime = ((new Date(data.aed[wall.indexMole]['Timestamp']).getTime()) - wall.reactionTime.spawnTime.getTime());
+                        wall.reactionTime.currentReactionTime = ((new Date(data.aed[chartOptions.indexAed]['Timestamp']).getTime()) - wall.reactionTime.spawnTime.getTime());
                         //wall.updateReactionTime();
                         
                         utils.changeFillElement(thisMole,"orange",0);
                         utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.moleHitCount++;
                         //infosDisplay.changeInfos2();
-                        //console.log("mh: "+wall.indexMole)
+                        //console.log("mh: "+chartOptions.indexAd)
                         break;
                     
                     case "Fake Mole Hit":
                         utils.changeFillElement(thisMole,"red",0);
                         utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        wall.indexMole++;
+                        //chartOptions.indexAd++;
                         wall.molesEventCount.fakeMoleHitCount++;
                         //infosDisplay.changeInfos2();
-                       // console.log("fmh: "+wall.indexMole)
+                       // console.log("fmh: "+chartOptions.indexAd)
                         break;
                     
                     default:
-                        wall.indexMole++
+                        //chartOptions.indexAd++
                         break;
                 
                 };
-            };
-        };
+            //};
+        //};
     },
     
     // Hand over all moles in their original state
@@ -347,10 +348,10 @@ var wall = {
     changeLaserLocation : function(){
     
         // If the target date is less than the date in the index of events
-        if(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexLaser]['Timestamp'])){
+        //if(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
               
-              coords = wall.getLaserCoordPx(wall.indexLaser);
+              coords = wall.getLaserCoordPx(chartOptions.indexAd);
             
                 if(chartOptions.mouvementSettings.rightController)wall.element.objRightLaser.transition()
                     .duration(14)
@@ -362,10 +363,10 @@ var wall = {
                     .attr('x', function(d) { return coords.left.x })
                     .attr('y', function(d) { return coords.left.y });
                 
-                wall.indexLaser++;
-                
-            };
-        };
+                //chartOptions.indexAd++;
+
+            //};
+        //};
     },
     
     addViewportBoundaries: function(){
@@ -392,11 +393,11 @@ var wall = {
     changeViewportBoundariesLocation : function(){
     
         // If the target date is less than the date in the index of events
-        if(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexViewportBoundaries]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >= new Date(data.ad[wall.indexViewportBoundaries]['Timestamp'])){
+        //if(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
         
                 wall.element.objViewportBoundaries
-                    .data([wall.getViewportBoundariesCoordPx(wall.indexViewportBoundaries)])
+                    .data([wall.getViewportBoundariesCoordPx(chartOptions.indexAd)])
                     .transition()
                     .duration(14)
                     .attr('points', function(d) { 
@@ -408,10 +409,10 @@ var wall = {
                                     }
                     );
                     
-                wall.indexViewportBoundaries++;
+                //chartOptions.indexAd++;
                 
-            };
-        };
+            //};
+        //};
     },
     
 
@@ -439,16 +440,23 @@ var wall = {
     
     updated : function(){
    
-         if(wall.displaySettings.moles)wall.changeMolesState();
+         //if(wall.displaySettings.moles)wall.changeMolesState();
          if(wall.displaySettings.viewportBoundaries)wall.changeViewportBoundariesLocation();
          if(wall.displaySettings.laser)wall.changeLaserLocation();
     },
     
-    resetIndexes : function(){
+    resetAll : function(){
+        wall.resetMoles();
+        
+        wall.molesEventCount = {
+          moleSpawnCount : 0,
+          moleHitCount : 0,
+          moleExpired : 0,
+          fakeMoleSpawnCount : 0,
+          fakeMoleHitCount : 0,
+          fakeMoleExpired : 0,
       
-          wall.indexMole = 0;
-          wall.indexLaser = 0;
-          wall.indexViewportBoundaries = 0;
+        };
     },
     
 };

@@ -37,8 +37,8 @@ var infosDisplay = {
         MotorSpaceYScale : {},
     },
 
-    indexScrollingList : 0,
-    indexMotorSpace : 0,
+    //indexScrollingList : 0,
+    //indexMotorSpace : 0,
     
     test : function(){
         return 1;
@@ -47,14 +47,30 @@ var infosDisplay = {
     updateLocalVariables : function(newSettings){
       
         infosDisplay.settings = newSettings;
-        
+        //console.log(data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]+(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"]))
         // Declaration of the graph domains
-        infosDisplay.scale.MotorSpaceYScale = d3.scaleLinear()
-                      .domain([(-(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainY"])/2.5, ((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainY"])/2.5])
-                      .range([(0), (240)]);
-                  		
         infosDisplay.scale.MotorSpaceXScale = d3.scaleLinear()
-            .domain([(-(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainX"])/2.5, ((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])/2)*(data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceGainX"])/2.5]) 
+                      .domain([
+                        (
+                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0-(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*5.0
+                        ), 
+                        (
+                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0+(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*5.0
+                        )
+                        ])
+                      .range([(0), (240)]);
+
+            
+            
+        infosDisplay.scale.MotorSpaceYScale = d3.scaleLinear()
+            .domain([
+              (
+                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0-(data.motorSpace[0]["MotorSpaceHeight"])*5.0
+              ), 
+              (
+                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0+(data.motorSpace[0]["MotorSpaceHeight"])*5.0
+              ) 
+            ])
             .range([(0), (180)]);
     },
     
@@ -215,6 +231,18 @@ var infosDisplay = {
           }
       }
       
+      // Add an empty box to allow adjustment on the last event
+      for(var i = 0; i < 10; i++){
+        var elementListe = infosDisplay.element.infosDisplayListDiv.append("li").attr("id", "r2"+(i)).attr("style","display : inline-block;list-style-type : none;");
+              // add date
+        elementListe.append("svg")
+                  .attr("width", infosDisplay.settings.width-20)
+                  .attr("height", 20);
+      }
+      
+      
+      
+      
       utils.addElement("div",infosDisplay.element.infosDisplayDiv,
               [
                 "width:" +infosDisplay.settings.width+"px;"+
@@ -322,11 +350,6 @@ var infosDisplay = {
  	
  	
  	
- 	
- 	
- 	
- 	
- 	
  	      //add right controller infos
  	
         gameStatsSection = infosDisplay.element.infosDisplayCoordinateSVG.append("g");
@@ -339,7 +362,7 @@ var infosDisplay = {
         	.attr("y", graphController.settings.marginTop +210 -25);
         	
         gameStatsSection.append("text")
-        	.text(Math.round((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])*100) + " x " + Math.round((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])*100) + " cm") 	
+        	.text(Math.round((data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*100) + " x " + Math.round((data.motorSpace[chartOptions.indexAd]["MotorSpaceHeight"])*100) + " cm") 	
         	.attr("x", (graphController.settings.marginLeft + graphController.settings.width*2 ))
         	.attr("y", graphController.settings.marginTop +210)
         	.style("font-size", "17px")
@@ -404,7 +427,7 @@ var infosDisplay = {
         	.attr("y", graphController.settings.marginTop +210 -25);
         	
         gameStatsSection.append("text")
-        	.text(Math.round((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceWidth"])*100) + " x " + Math.round((data.motorSpace[infosDisplay.indexMotorSpace]["MotorSpaceHeight"])*100) + " cm") 	
+        	.text(Math.round((data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*100) + " x " + Math.round((data.motorSpace[chartOptions.indexAd]["MotorSpaceHeight"])*100) + " cm") 	
         	.attr("x", (graphController.settings.marginLeft + graphController.settings.width +30 +25))
         	.attr("y", graphController.settings.marginTop +210)
         	.style("font-size", "17px")
@@ -464,15 +487,15 @@ var infosDisplay = {
             .attr('xlink:href', graphController.settings.leftControllerPicURL)
             .attr('width', graphController.settings.controllerWidth)
             .attr('height', graphController.settings.controllerHeight)
-            .attr("x", 0)
-          	.attr("y", 0)
+            .attr("x", 90)
+          	.attr("y", 120)
           	
         infosDisplay.element.objControllerRight = infosDisplay.element.infosMotorSpaceRSVG.append("g").append('image')
             .attr('xlink:href', graphController.settings.rightControllerPicURL)
             .attr('width', graphController.settings.controllerWidth)
             .attr('height', graphController.settings.controllerHeight)
-            .attr("x", 0)
-          	.attr("y", 0)
+            .attr("x", 90)
+          	.attr("y", 120)
     
     },
     
@@ -481,13 +504,13 @@ var infosDisplay = {
 
         return coord = {
           right : {
-            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['RightControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
-            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['RightControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
+            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['RightControllerPosWorldX'])),
+            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['RightControllerPosWorldY'])),
             z : 0,
           },
           left : {
-            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['LeftControllerPosWorldX']-data.ad[i]['HeadCameraPosWorldX'])*graphController.settings.zoom),
-            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['LeftControllerPosWorldY']-data.ad[i]['HeadCameraPosWorldY'])*graphController.settings.zoom),
+            x : infosDisplay.scale.MotorSpaceXScale((data.ad[i]['LeftControllerPosWorldX'])),
+            y : infosDisplay.scale.MotorSpaceYScale((data.ad[i]['LeftControllerPosWorldY'])),
             z : 0,
           }
         };
@@ -495,12 +518,12 @@ var infosDisplay = {
     
     changeScrollingList : function(){
       
-      if(new Date(chartOptions.indexDate) >= new Date(data.aed[infosDisplay.indexScrollingList]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >= new Date(data.aed[infosDisplay.indexScrollingList]['Timestamp'])){
+      //if(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
             
                 var srcolling = false;
             
-                switch (data.aed[infosDisplay.indexScrollingList]['Event']) {
+                switch (data.aed[chartOptions.indexAed]['Event']){
                     case "Mole Hit":
                       srcolling = true;
                       break;
@@ -513,56 +536,57 @@ var infosDisplay = {
                 }
             
                 if(srcolling){
+                  
                     // scroll down the list of events to the current event
                     var list = document.getElementById("eventList");
-                    var targetLi = document.getElementById("r"+(infosDisplay.indexScrollingList));
+                    var targetLi = document.getElementById("r"+(chartOptions.indexAed));
         
                     list.scrollTop = (targetLi.offsetTop);
                 }
         
-                infosDisplay.indexScrollingList++;
+                //chartOptions.indexAed++;
                 
-            };
-        };
+            //};
+        //};
     },
     
     changeControlersLocation : function(){
-      
+      //console.log(infosDisplay.getControllersCoordPx(chartOptions.indexAd).right.x + " : "+infosDisplay.getControllersCoordPx(chartOptions.indexAd).right.y)
       if(chartOptions.mouvementSettings.rightController)infosDisplay.element.objControllerRight.transition()
                     .duration(14)
-                    .attr('x', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).right.x; })
-                    .attr('y', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).right.y; })
+                    .attr('x', function(d) { return infosDisplay.getControllersCoordPx(chartOptions.indexAd).right.x; })
+                    .attr('y', function(d) { return infosDisplay.getControllersCoordPx(chartOptions.indexAd).right.y; })
                     
       if(chartOptions.mouvementSettings.leftController)infosDisplay.element.objControllerLeft.transition()
                     .duration(14)
-                    .attr('x', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).left.x; })
-                    .attr('y', function(d) { return infosDisplay.getControllersCoordPx(infosDisplay.indexMotorSpace).left.y; })
+                    .attr('x', function(d) { return infosDisplay.getControllersCoordPx(chartOptions.indexAd).left.x; })
+                    .attr('y', function(d) { return infosDisplay.getControllersCoordPx(chartOptions.indexAd).left.y; })
 
     },
     
     changeMotorSpaceInfo : function(){
       
-          if(new Date(chartOptions.indexDate) >= new Date(data.ad[infosDisplay.indexMotorSpace]['Timestamp'])){
-            while(new Date(chartOptions.indexDate) >= new Date(data.ad[infosDisplay.indexMotorSpace]['Timestamp'])){
+          //if(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
+            //while(new Date(chartOptions.indexDate) >= new Date(data.ad[chartOptions.indexAd]['Timestamp'])){
               
                   var thisMole = {};
                   
                   if(chartOptions.mouvementSettings.rightController){
-                      thisMole = d3.selectAll("#graphMotorSpaceRightPath"+infosDisplay.indexMotorSpace);
+                      thisMole = d3.selectAll("#graphMotorSpaceRightPath"+chartOptions.indexAd);
                       utils.changeFillElement(thisMole,graphController.settings.pathColor,0);
                       utils.changeFillElement(thisMole, "#00000000",graphController.settings.pathTime);
                   }
                   
                   if(chartOptions.mouvementSettings.leftController){
-                      thisMole = d3.selectAll("#graphMotorSpaceLeftPath"+infosDisplay.indexMotorSpace);
+                      thisMole = d3.selectAll("#graphMotorSpaceLeftPath"+chartOptions.indexAd);
                       utils.changeFillElement(thisMole,graphController.settings.pathColor,0);
                       utils.changeFillElement(thisMole, "#00000000",graphController.settings.pathTime);
                   }
         
-                  infosDisplay.indexMotorSpace ++;
+                  //chartOptions.indexAd ++;
                 
-            }
-          }
+            //}
+          //}
 
     },
 
@@ -615,15 +639,39 @@ var infosDisplay = {
         
         
         infosDisplay.changeControlersLocation();
-        infosDisplay.changeScrollingList();
+        //infosDisplay.changeScrollingList();
         infosDisplay.changeMotorSpaceInfo();
         
     },
     
-    resetIndexes : function(){
-      
-          infosDisplay.indexScrollingList = 0;
-          infosDisplay.indexMotorSpace = 0;
+    resetAll : function(){
+        // change text values
+        
+        // reset the number of spawned moles
+        d3.select("#infosDisplayMoleSpawnedText")
+        .text("0 / "+data.ms[0]["moleSpawned"]+ " mole spawned");
+        
+        // reset the number of hit moles 
+        d3.select("#infosDisplayMoleHitText")
+        .text("0 mole hit, 0 missed");
+        
+        // reset the number of moles hit
+        d3.select("#infosDisplayFakeMoleSpawnedText")
+        .text("0 / "+data.ms[0]["fakeMoleSpawned"]+ " distractors spawned");
+        
+        // reset the number of fake moles hit
+        d3.select("#infosDisplayFakeMoleHitText")
+        .text("0 distractor hit");
+        
+        // reset the reaction time value
+        d3.select("#infosDisplayReactionTimeText")
+        .text("0.00 Seconds");
+        
+        // scroll down the list of events to the 1st event
+        var list = document.getElementById("eventList");
+        var targetLi = document.getElementById("r0");
+
+        list.scrollTop = (targetLi.offsetTop);
     },
-    
+
 }

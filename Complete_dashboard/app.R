@@ -1,10 +1,10 @@
 #//////////////////////////////////////////////////
 #/*      CREATE Aalborg University               */
 #/*      aldsanms                                */
-#/*      jan-17-2023                             */
+#/*      jan-25-2023                             */
 #/*      app.R                                   */
 #/*      ImplementCompleteDashboard              */
-#/*      v_1_0_1                                 */
+#/*      v_1_2_0                                 */
 #//////////////////////////////////////////////////
 
 
@@ -22,14 +22,14 @@ AllData <- LoadFromDirectory("data")
 #retrieval of information necessary for the construction of the wall
 Moles <- (
   AllData %>% 
-    filter(filename == "data/log_Event.csv") %>% 
+    filter(Event != "Sample") %>% 
     select(MoleId,MolePositionLocalX,MolePositionLocalY,WallColumnCount,WallRowCount,Event) %>%  
     filter(!is.na(MoleId))
 )
 
 Controller <- (
   AllData %>% 
-    filter(filename == "data/log_Sample.csv") %>% 
+    filter(Event == "Sample") %>% 
     select(RightControllerPosWorldX,RightControllerPosWorldZ,RightControllerPosWorldY)
 )
 
@@ -77,8 +77,8 @@ MotorSpaceName <- unique(
     filter(!is.na(MotorSpaceName))
 )
 
-ad = (AllData %>% filter(filename == "data/log_Sample.csv"))
-aed = (AllData %>% filter(filename == "data/log_Event.csv"))
+ad = (AllData %>% filter(Event == "Sample"))
+aed = (AllData %>% filter(Event != "Sample"))
 
 activeController <- unique(
   AllData %>% 

@@ -1,0 +1,2 @@
+Age;DeviceID;Email;Framecount;Gender;Handedness;InjuryDate;ParticipantID;ProfileGroup;ProfileID;ProfileName;SamplingFrequency;SessionDuration;SessionID;SessionProgram;SessionState;testID;Timestamp
+21;27ac8d8bea2d88f09b633ff5a9174776b9ebdb29;test@gmail.com;10427;Male;Right;9999-99-99;0;TestGroup;40055f0a39aeaf3fdbf01baecbdd6854;test;0.0080;149.7500;c0f1f606-0485-4810-a4ed-3efe6618ed31;D2-5 Mirror Therapy;Interrupted;0;2023-01-24 13:27:23.8095
