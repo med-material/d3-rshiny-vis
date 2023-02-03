@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-26-2022                             */
+/*      feb-03-2022                             */
 /*      wall.js                                 */
-/*      v2_2_4                                  */
+/*      v2_3_2                                  */
 //////////////////////////////////////////////////
 //Contains all the functions necessary for the operation of the wall display.
 
@@ -106,12 +106,12 @@ var wall = {
         wall.settings = newSettings;
         
         // Calculation of the extreme values of the wall
-        //                     =                       Xmax   +   the size of a mole * 2
-        wall.xMax = data.wallInfo[1]["x_extrem"] + (data.wallInfo[1]["x_extrem"]/(data.wallInfo[0]["n_col_row"]))*2;
-        wall.xMin = -wall.xMax;
+        //                     =                       Xmax   +   the size of a mole * 1.5
+        wall.xMax = data.wallInfo[1]["x_extrem"] + (data.wallInfo[1]["x_extrem"]/(data.wallInfo[0]["n_col_row"]))*1.5;
+        wall.xMin = data.wallInfo[0]["x_extrem"] - (data.wallInfo[1]["x_extrem"]/(data.wallInfo[0]["n_col_row"]))*1.5;
         
-        wall.yMax = data.wallInfo[1]["y_extrem"] + (data.wallInfo[1]["y_extrem"]/(data.wallInfo[1]["n_col_row"]))*2;
-        wall.yMin = -wall.yMax;
+        wall.yMax = data.wallInfo[1]["y_extrem"] + (data.wallInfo[1]["y_extrem"]/(data.wallInfo[1]["n_col_row"]))*1.5;
+        wall.yMin = data.wallInfo[0]["y_extrem"] - (data.wallInfo[1]["y_extrem"]/(data.wallInfo[1]["n_col_row"]))*1.5;
         
         
         // Declaration of the wall domains
@@ -140,11 +140,11 @@ var wall = {
     },
     
     addMolesToWall : function() {
-    
+
         // Average offset between each mole in X
-        var xStep = ((data.wallInfo[1]["x_extrem"]*2)/((data.wallInfo[0]["n_col_row"])-1));
+        var xStep = ((Math.abs(data.wallInfo[0]["x_extrem"])+Math.abs(data.wallInfo[1]["x_extrem"]))/((data.wallInfo[0]["n_col_row"])-1));
         // Average offset between each mole in Y
-        var yStep = ((data.wallInfo[1]["y_extrem"]*2)/((data.wallInfo[1]["n_col_row"])-1));
+        var yStep = ((Math.abs(data.wallInfo[0]["y_extrem"])+Math.abs(data.wallInfo[1]["y_extrem"]))/((data.wallInfo[1]["n_col_row"])-1));
 
         for(var c = 0;c < (data.wallInfo[0]["n_col_row"]); c++){ //For each columns
           for(var r = 0;r < (data.wallInfo[1]["n_col_row"]); r++){ //For each rows
@@ -210,64 +210,41 @@ var wall = {
                 var thisMole = wall.arrays.objMoles[wall.arrays.idMoles.indexOf(parseInt(data.aed[chartOptions.indexAed]['MoleId']))];
                 
                 // Event playback
-                switch(data.aed[chartOptions.indexAed]['Event']){
-                    
-                    case "Mole Spawned":
-                        // Change the background color of the mole with a time transition
-                        wall.reactionTime.spawnTime = new Date(data.aed[chartOptions.indexAed]['Timestamp']);
-                        
-                        utils.changeFillElement(thisMole,"green",1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.moleSpawnCount++;
-
-                        
-                        break;
-                    
-                    case "Fake Mole Spawned":
-                        utils.changeFillElement(thisMole,"#FFFB00",1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.fakeMoleSpawnCount++;
-
-                        break;
-                    
-                    case "Mole Expired":
-                        utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.moleExpired++;
-                        break;
-                    
-                    case "Fake Mole Expired":
-                        utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.fakeMoleExpired++;
-                        break;
-                    
-                    case "Mole Hit":
-                        wall.reactionTime.currentReactionTime = ((new Date(data.aed[chartOptions.indexAed]['Timestamp']).getTime()) - wall.reactionTime.spawnTime.getTime());
-                        //wall.updateReactionTime();
-                        
-                        utils.changeFillElement(thisMole,"orange",0);
-                        utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.moleHitCount++;
-                        //infosDisplay.changeInfos2();
-                        //console.log("mh: "+chartOptions.indexAd)
-                        break;
-                    
-                    case "Fake Mole Hit":
-                        utils.changeFillElement(thisMole,"red",0);
-                        utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
-                        //chartOptions.indexAd++;
-                        wall.molesEventCount.fakeMoleHitCount++;
-                        //infosDisplay.changeInfos2();
-                       // console.log("fmh: "+chartOptions.indexAd)
-                        break;
-                    
-                    default:
-                        //chartOptions.indexAd++
-                        break;
                 
-                };
+                var event = data.aed[chartOptions.indexAed]['Event'];
+                
+                if(event == "Mole Spawned"){
+                    // Change the background color of the mole with a time transition
+                    wall.reactionTime.spawnTime = new Date(data.aed[chartOptions.indexAed]['Timestamp']);
+                    
+                    utils.changeFillElement(thisMole,"green",1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.moleSpawnCount++;
+                }else if((event == "Fake Mole Spawned") || (event == "DistractorLeft Mole Spawned") || (event == "DistractorRight Mole Spawned")){
+                    utils.changeFillElement(thisMole,"#FFFB00",1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.fakeMoleSpawnCount++;
+                }else if(event == "Mole Expired"){
+                    utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.moleExpired++;
+                }else if((event == "Fake Mole Expired") || (event == "DistractorRight Mole Expired") || (event == "DistractorLeft Mole Expired")){
+                    utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.fakeMoleExpired++;
+                }else if(event == "Mole Hit"){
+                    wall.reactionTime.currentReactionTime = ((new Date(data.aed[chartOptions.indexAed]['Timestamp']).getTime()) - wall.reactionTime.spawnTime.getTime());  
+                    utils.changeFillElement(thisMole,"orange",0);
+                    utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.moleHitCount++;
+                }else if((event == "Fake Mole Hit") || (event == "DistractorRight Mole Hit") || (event == "DistractorLeft Mole Hit")){
+                    utils.changeFillElement(thisMole,"red",0);
+                    utils.changeFillElement(thisMole, wall.settings.molesColor,1000);
+                    //chartOptions.indexAd++;
+                    wall.molesEventCount.fakeMoleHitCount++;
+                }
+                
             //};
         //};
     },
@@ -315,13 +292,13 @@ var wall = {
         var coord = wall.getLaserCoord(i);
         return coordPx = {
           left : {
-            x : wall.scale.xScale(coord.left.x),
-            y : wall.scale.yScale(coord.left.y-1.5),
+            x : wall.scale.xScale(coord.left.x)-wall.settings.laserSize/2,
+            y : wall.scale.yScale(coord.left.y)-wall.settings.laserSize/2,
             z : 0,
           },
           right : {
-            x : wall.scale.xScale(coord.right.x),
-            y : wall.scale.yScale(coord.right.y-1.5),
+            x : wall.scale.xScale(coord.right.x)-wall.settings.laserSize/2,
+            y : wall.scale.yScale(coord.right.y)-wall.settings.laserSize/2,
             z : 0,
           }
         };
@@ -419,12 +396,12 @@ var wall = {
     getViewportBoundariesCoordPx : function(i){
       
         var poly = [
-            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerLeftX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerLeftY']-2)},
-            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerMiddleX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerMiddleY']-2)},
-            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerRightX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerRightY']-2)},
-            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperRightX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperRightY']-2)},
-            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperMiddleX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperMiddleY']-2)},
-            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperLeftX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperLeftY']-2)}
+            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerLeftX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerLeftY'])},
+            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerMiddleX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerMiddleY'])},
+            {"x":wall.scale.xScale(data.ad[i]['ViewportLowerRightX']), "y":wall.scale.yScale(data.ad[i]['ViewportLowerRightY'])},
+            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperRightX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperRightY'])},
+            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperMiddleX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperMiddleY'])},
+            {"x":wall.scale.xScale(data.ad[i]['ViewportUpperLeftX']), "y":wall.scale.yScale(data.ad[i]['ViewportUpperLeftY'])}
           ];
 
         return poly;

@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-16-2022                             */
+/*      feb-03-2022                             */
 /*      GraphController.js                      */
-/*      v1_1_4                                  */
+/*      v1_2_0                                  */
 //////////////////////////////////////////////////
 //Contains all the functions necessary for the operation of the graph display.
 
@@ -65,6 +65,9 @@ var graphController = {
         }
     },
     
+    x_max : 0,
+    z_max : 0,
+    
     displaySettings : {
       controller : false,
       nearControllerPath : false,
@@ -85,17 +88,33 @@ var graphController = {
         graphController.settings = newSettings;
         
         
-        if(newSettings.zoom == "auto"){
-          graphController.settings.zoom = (1/(Math.max( (Math.abs(data.ControllerInfos[0]["x_extrem"]) , Math.abs(data.ControllerInfos[1]["x_extrem"])) )*1.1));
-        }
         
+       
+        graphController.x_max = Math.max( 
+          Math.abs(data.ControllerInfos[1]["x_extrem_right"]) , 
+          Math.abs(data.ControllerInfos[0]["x_extrem_left"])
+        ) 
+        
+        graphController.z_max = Math.max( 
+          Math.abs(data.ControllerInfos[1]["z_extrem_right"]) , 
+          Math.abs(data.ControllerInfos[0]["z_extrem_left"]),
+          Math.abs(data.ControllerInfos[0]["z_extrem_right"]) , 
+          Math.abs(data.ControllerInfos[1]["z_extrem_left"])
+        ) 
+        
+        
+          
+        if(newSettings.zoom == "auto"){
+          graphController.settings.zoom = 0.9;
+        }
+
         // Declaration of the graph domains
         graphController.scale.zScale = d3.scaleLinear()
-            .domain([(graphController.settings.valueMax/graphController.settings.zoom), (-graphController.settings.valueMax/graphController.settings.zoom)]) 
+            .domain([(graphController.z_max/graphController.settings.zoom), (-graphController.z_max/graphController.settings.zoom)]) 
             .range([(0), (graphController.settings.height)]);
         		
         graphController.scale.xScale = d3.scaleLinear()
-            .domain([(-graphController.settings.valueMax/graphController.settings.zoom), (graphController.settings.valueMax/graphController.settings.zoom)]) 
+            .domain([(-graphController.x_max/graphController.settings.zoom), (graphController.x_max/graphController.settings.zoom)]) 
             .range([(0), (graphController.settings.width)]);
        
     },
@@ -284,17 +303,18 @@ var graphController = {
     
     addHeadPoint : function(){
         
+        var headSize = (0.1 * graphController.scale.xScale(graphController.x_max))/graphController.x_max
         // Add point as a head
         utils.addElement("div",graphController.element.graphControllerDiv,
             [
-                "left:"+((graphController.settings.width/2)-((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px;"+
-                "top:"+((graphController.settings.height/2)-((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px;"+
+                "left:"+(graphController.scale.xScale(0)-headSize/2)+"px;"+
+                "top:"+(graphController.scale.zScale(0)-headSize/2)+"px;"+
                 "display: flex;"+
                 "position:absolute;"+
                 "background: rgb(50, 50, 50, 1);"+
-                "width:"+((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))+"px;"+
-                "height:"+((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))+"px;"+
-                "border-radius:"+(((0.2*graphController.settings.width)/((graphController.settings.valueMax/graphController.settings.zoom)*2))/2)+"px"
+                "width:"+(headSize)+"px;"+
+                "height:"+(headSize)+"px;"+
+                "border-radius:"+(headSize)+"px"
             ]
         );
     },

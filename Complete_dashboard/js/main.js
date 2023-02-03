@@ -2,9 +2,9 @@
 /*      Graph D3.js ImplementCompleteDashboard  */
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-25-2023                             */
+/*      feb-03-2023                             */
 /*      main.js                                 */
-/*      v_1_2_0                                 */
+/*      v_1_3_2                                 */
 //////////////////////////////////////////////////
 
 //
@@ -104,6 +104,7 @@ var chartOptions = {
         isStart : false,
         index : 0,
         fps :24,
+        timeTot : 0,
     },
     
     mouseButton : 0,
@@ -159,6 +160,8 @@ function initialization(){
     chartOptions.dateMin = new Date(data.ad[0]['Timestamp']);
     chartOptions.dateMax = new Date(data.ad[data.ad.length-2]['Timestamp']);
     
+    chartOptions.mouvementSettings.timeTot = (chartOptions.dateMax.getTime() - chartOptions.dateMin.getTime())
+
     chartOptions.startProgTime = new Date().getTime();
     
     // Initialize index date
@@ -173,8 +176,9 @@ function initialization(){
     slider.updateLocalVariables(chartOptions.sliderSettings);
     
     infosDisplay.updateLocalVariables(chartOptions.infosDisplaySettings);
-    
+   
     for (var i = 0;i < data.activeController.length; i++) {
+       
       switch (data.activeController[i]["ControllerName"]) {
            case "Controller (right)":
              chartOptions.mouvementSettings.rightController = true;
@@ -188,7 +192,7 @@ function initialization(){
       
          }
     }
-  
+
     
 };
 
@@ -261,7 +265,7 @@ function clock(){
   
          
     // If is start
-    if(chartOptions.mouvementSettings.isStart && (Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps)) < (data.ad.length-2))){
+    if(chartOptions.mouvementSettings.isStart && (Math.round(chartOptions.mouvementSettings.index) < (chartOptions.mouvementSettings.timeTot))){
       
       if(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
             while(new Date(chartOptions.indexDate) >= new Date(data.aed[chartOptions.indexAed]['Timestamp'])){
@@ -302,17 +306,16 @@ function clock(){
         infosDisplay.updated();
         
 
-        chartOptions.mouvementSettings.index ++;
-         
+        chartOptions.mouvementSettings.index = chartOptions.mouvementSettings.index *1 + (1000 / chartOptions.mouvementSettings.fps)*1;
     
         // Get new curent index date
-        chartOptions.indexDate = new Date(  new Date(chartOptions.dateRecalibrated).getTime() + new Date().getTime() - new Date(chartOptions.startProgTime).getTime());
-
+        chartOptions.indexDate = new Date(  chartOptions.dateMin.getTime()*1 + chartOptions.mouvementSettings.index*1 );
+       
         chartOptions.dateDif = new Date(chartOptions.indexDate-chartOptions.dateMin);
         
         // change slider value
         slider.element.objSlider.value = chartOptions.mouvementSettings.index;
-        
+       
         d3.select("#sliderTimeText")
         .text(chartOptions.dateDif.getMinutes()+":"+chartOptions.dateDif.getSeconds()+"."+chartOptions.dateDif.getMilliseconds());
     };
@@ -371,10 +374,12 @@ window.sliderChange = function(){
     
           chartOptions.mouvementSettings.index = slider.element.objSlider.value;
           
-          if(Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps)) <= data.ad.length){
-              chartOptions.indexDate = new Date(data.ad[Math.round(chartOptions.mouvementSettings.index/(1000 / chartOptions.mouvementSettings.fps))]['Timestamp']);
+          
+          
+          if(chartOptions.mouvementSettings.index <= chartOptions.mouvementSettings.timeTot){
+              chartOptions.indexDate = new Date(  chartOptions.dateMin.getTime()*1 + chartOptions.mouvementSettings.index*1 );
               chartOptions.dateRecalibrated = chartOptions.indexDate;
-              
+
               // Reset all indexes
               chartOptions.indexAd = 0;
               chartOptions.indexAed = 0;

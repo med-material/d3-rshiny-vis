@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////
 /*      CREATE Aalborg University               */
 /*      aldsanms                                */
-/*      jan-16-2022                             */
+/*      feb-01-2022                             */
 /*      slider.js                               */
-/*      v1_1_3                                  */
+/*      v1_2_0                                  */
 //////////////////////////////////////////////////
 //Contains all the functions necessary for slider display.
 
@@ -51,11 +51,10 @@ var slider = {
       
         slider.settings = newSettings;
         
-        
-        slider.maxValue = Math.round((data.ad.length)*((1000 / chartOptions.mouvementSettings.fps)));
+        slider.maxValue = chartOptions.mouvementSettings.timeTot;
         
         slider.scale.dateScale = d3.scaleTime()
-            .domain([new Date(0),new Date(chartOptions.dateMax.getTime() - chartOptions.dateMin.getTime())])
+            .domain([new Date(0),new Date(chartOptions.mouvementSettings.timeTot)])
             .range([0, slider.settings.sliderWidth]);
       
     },

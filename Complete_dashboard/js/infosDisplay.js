@@ -52,10 +52,10 @@ var infosDisplay = {
         infosDisplay.scale.MotorSpaceXScale = d3.scaleLinear()
                       .domain([
                         (
-                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0-(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*5.0
+                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0-(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*10.0
                         ), 
                         (
-                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0+(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*5.0
+                          data.motorSpace[chartOptions.indexAd]["MotorSpaceCenterPositionX"]*1.0+(data.motorSpace[chartOptions.indexAd]["MotorSpaceWidth"])*10.0
                         )
                         ])
                       .range([(0), (240)]);
@@ -65,10 +65,10 @@ var infosDisplay = {
         infosDisplay.scale.MotorSpaceYScale = d3.scaleLinear()
             .domain([
               (
-                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0-(data.motorSpace[0]["MotorSpaceHeight"])*5.0
+                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0-(data.motorSpace[0]["MotorSpaceHeight"])*10.0
               ), 
               (
-                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0+(data.motorSpace[0]["MotorSpaceHeight"])*5.0
+                data.motorSpace[0]["MotorSpaceCenterPositionY"]*1.0+(data.motorSpace[0]["MotorSpaceHeight"])*10.0
               ) 
             ])
             .range([(0), (180)]);
