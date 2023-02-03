@@ -1,0 +1,2 @@
+Age;DeviceID;Email;Framecount;Gender;Handedness;InjuryDate;ParticipantID;ProfileGroup;ProfileID;ProfileName;SamplingFrequency;SessionDuration;SessionID;SessionProgram;SessionState;testID;Timestamp
+21;27ac8d8bea2d88f09b633ff5a9174776b9ebdb29;test@gmail.com;7359;Male;Right;9999-99-99;0;TestGroup;40055f0a39aeaf3fdbf01baecbdd6854;test;0.0080;79.7577;2a709e7d-0405-4a89-99a2-89cb901f7841;Random Moles;Interrupted;0;2023-02-01 11:24:10.3888
