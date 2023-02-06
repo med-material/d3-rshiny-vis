@@ -5,7 +5,9 @@ var Global_Variables = {
   pointsOnlyX : [],
   pointsOnlyY : [],
   xScale : {},
-  yScale : {}
+  yScale : {},
+  height : 800,
+  width : 800
 }
 
 function storeCoords(xVal, yVal) { Global_Variables.pointsArray.push([xVal,yVal,0])}
@@ -86,28 +88,28 @@ function ToAnotherList(points) {
   }
   
 function PrepareGraph(){
-      svg.attr('width',900)
-    .attr('height',900)
-    .attr('style', "background: rgb(255, 255, 255);background-image: url(img/back01.svg);background-repeat: no-repeat;background-position: 50% 40%    ;background-size: 100%;");
+      svg.attr('width',Global_Variables.width)
+    .attr('height',Global_Variables.height)
+    .attr('style', "background: rgb(255, 255, 255);background-image: url(img/back01.svg);background-repeat: no-repeat;background-position: 50% 40%    ;background-size: "+Global_Variables.zoom*160+"%;");
 
     			
     var Graph = svg.append("g")
-    .attr('width',900)
-    .attr('height',"auto")
+    .attr('width',Global_Variables.width)
+    .attr('height',Global_Variables.height)
     
     Global_Variables.xScale = d3.scaleLinear()
     			.domain([Global_Variables.graphValueMax/Global_Variables.zoom, -Global_Variables.graphValueMax/Global_Variables.zoom]) 
-    			.range([0, 900]);
+    			.range([0, Global_Variables.width]);
     Global_Variables.yScale = d3.scaleLinear()
     			.domain([-Global_Variables.graphValueMax/Global_Variables.zoom, Global_Variables.graphValueMax/Global_Variables.zoom]) 
-    			.range([0,900]);
+    			.range([0,Global_Variables.height]);
     			
     svg.append('g')
-    	.attr('transform', 'translate(450,0)')
+    	.attr('transform', 'translate('+(Global_Variables.height/2)+',0)')
     	.call(d3.axisLeft(Global_Variables.xScale).ticks(10));
     
     svg.append('g')
-      .attr('transform', 'translate(0,450)')
+      .attr('transform', 'translate(0,'+(Global_Variables.width/2)+')')
       .call(d3.axisBottom(Global_Variables.yScale).ticks(10));   
       
       return Graph;
